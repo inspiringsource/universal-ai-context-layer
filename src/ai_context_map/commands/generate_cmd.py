@@ -42,20 +42,33 @@ def generate_context(root: Path) -> ContextDocument:
 
     for item in ranked:
         node = nodes[item.path]
-        if len(key_files) >= 8:
-            break
         if node.role in {"test", "config"} and item.score < 8:
             continue
         importance = "critical" if item.score >= 8 else "high" if item.score >= 4 else "medium"
-        key_files.append(KeyFile(path=item.path, role=node.role, importance=importance))
+        if len(key_files) < 8:
+            key_files.append(KeyFile(path=item.path, role=node.role, importance=importance))
         if node.role == "entrypoint" or any("main" in reason or "entrypoint" in reason for reason in item.reasons):
             confidence = min(0.99, 0.45 + (item.score / 20.0))
             entry_points.append(
                 EntryPoint(path=item.path, confidence=round(confidence, 2), reasons=item.reasons[:3])
             )
-        core_modules.append(CoreModule(path=item.path, score=item.score, reasons=item.reasons[:3]))
-        if metrics["incoming"].get(item.path, 0) >= 2:
-            hotspots.append(Hotspot(path=item.path, reason="high centrality"))
+        core_modules.append(
+            CoreModule(
+                path=item.path,
+                score=item.score,
+                reasons=item.reasons[:3],
+                pagerank_score=item.pagerank_score,
+            )
+        )
+        if item.pagerank_score > 0.0 and (metrics["incoming"].get(item.path, 0) >= 2 or item.pagerank_score >= 0.15):
+            hotspots.append(
+                Hotspot(
+                    path=item.path,
+                    reason="high dependency centrality",
+                    score=item.score,
+                    pagerank_score=item.pagerank_score,
+                )
+            )
 
     dir_counter = Counter(Path(path).parts[0] for path in nodes if Path(path).parts)
     directories = [
@@ -67,6 +80,11 @@ def generate_context(root: Path) -> ContextDocument:
     architecture = {
         "entry_points": entry_points[:5],
         "core_modules": core_modules[:10],
+        "top_pagerank_nodes": [
+            {"path": item.path, "pagerank_score": item.pagerank_score}
+            for item in sorted(ranked, key=lambda ranked_item: (-ranked_item.pagerank_score, ranked_item.path))[:5]
+            if item.pagerank_score > 0.0
+        ],
         "layers": _infer_layers(nodes),
     }
     document = ContextDocument(
@@ -91,6 +109,10 @@ def generate_context(root: Path) -> ContextDocument:
             "graph_edges": len(edges),
             "generation_time_ms": round((perf_counter() - started) * 1000, 2),
             "top_ranked_files": [item.path for item in ranked[:5]],
+            "top_ranked_file_metadata": [
+                {"path": item.path, "score": item.score, "pagerank_score": item.pagerank_score}
+                for item in ranked[:5]
+            ],
         },
     )
     output_path = root / config.output_path

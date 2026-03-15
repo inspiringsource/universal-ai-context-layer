@@ -24,6 +24,7 @@ class CoreModule:
     path: str
     score: float
     reasons: list[str]
+    pagerank_score: float = 0.0
 
 
 @dataclass(slots=True)
@@ -49,6 +50,8 @@ class NavigationMap:
 class Hotspot:
     path: str
     reason: str
+    score: float = 0.0
+    pagerank_score: float = 0.0
 
 
 @dataclass(slots=True)

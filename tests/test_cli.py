@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import yaml
 from typer.testing import CliRunner
 
 from ai_context_map.cli import app
@@ -23,6 +24,10 @@ def test_cli_init_and_generate(tmp_path: Path) -> None:
     assert generate_result.exit_code == 0
     assert (tmp_path / ".ai" / "context.yaml").exists()
     assert "Project:" in generate_result.stdout
+    context = yaml.safe_load((tmp_path / ".ai" / "context.yaml").read_text(encoding="utf-8"))
+    assert context["architecture"]["core_modules"][0]["pagerank_score"] > 0
+    assert context["architecture"]["top_pagerank_nodes"][0]["path"] == "src/app/service.py"
+    assert context["metrics"]["top_ranked_file_metadata"][0]["pagerank_score"] > 0
 
     inspect_routes_result = runner.invoke(app, ["inspect-routes", str(tmp_path)])
     assert inspect_routes_result.exit_code == 0

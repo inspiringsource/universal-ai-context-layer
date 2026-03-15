@@ -46,7 +46,11 @@ The result is faster inspection, less token usage, and more reliable edits.
 - Scan a repository with sensible ignore rules
 - Detect Python and basic JS/TS source files
 - Parse local imports and build a lightweight dependency graph
-- Rank important files using deterministic signals
+- Rank important files using a deterministic scoring system that combines:
+  - repository dependency graph centrality (PageRank)
+  - filename role heuristics (e.g., `main`, `api`, `routes`, `service`)
+  - entrypoint detection signals
+  - lightweight structural signals from the dependency graph
 - Explain file importance with traceable reasons
 - Extract Python symbol anchors from high-value files
 - Identify entry points, core modules, and dependency hotspots
@@ -55,6 +59,44 @@ The result is faster inspection, less token usage, and more reliable edits.
 - Initialize `.ai/history.yaml` and `.aicontext.toml`
 
 The tool intentionally avoids LLM calls and external services so the output remains **deterministic and reproducible**.
+
+---
+
+# Ranking Mechanism
+
+AI Context Map ranks files using a **deterministic hybrid scoring model** built from structural signals extracted from the repository.
+
+The ranking pipeline operates in several stages:
+
+1. **Dependency Graph Construction**  
+   Local imports and module relationships are parsed to construct a directed file‑level dependency graph.
+
+2. **Graph Centrality (PageRank)**  
+   A lightweight deterministic PageRank algorithm is computed over the dependency graph.  
+   Files that many important modules depend on receive higher centrality scores.
+
+3. **Heuristic Structural Signals**  
+   Additional signals are extracted from repository structure, including:
+
+   - filename role patterns (`main`, `api`, `routes`, `service`, `cli`, etc.)
+   - entrypoint detection
+   - directory role hints (e.g., `core`, `api`, `service`)
+
+4. **Score Normalization and Blending**  
+   PageRank and heuristic scores are normalized and blended into a final deterministic importance score.
+
+This produces rankings that balance:
+
+- **architectural centrality** (via PageRank)
+- **role‑based heuristics** (via filename and structure signals)
+
+The resulting ranking is used to identify:
+
+- `core_modules`
+- `hotspots`
+- `key_files`
+
+These signals guide AI agents toward the most structurally relevant parts of the repository before performing modifications.
 
 ---
 

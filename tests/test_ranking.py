@@ -17,4 +17,19 @@ def test_ranking_prefers_central_service_module() -> None:
     ranked = rank_files(nodes, edges, Config())
 
     assert ranked[0].path == "src/app/service.py"
+    assert ranked[0].pagerank_score > ranked[1].pagerank_score
 
+
+def test_ranking_handles_empty_graph() -> None:
+    assert rank_files({}, [], Config()) == []
+
+
+def test_ranking_is_deterministic_for_equal_scores() -> None:
+    nodes = {
+        "src/a.py": FileNode(path="src/a.py", language="python"),
+        "src/b.py": FileNode(path="src/b.py", language="python"),
+    }
+
+    ranked = rank_files(nodes, [], Config())
+
+    assert [item.path for item in ranked] == ["src/a.py", "src/b.py"]
