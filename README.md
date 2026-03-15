@@ -318,3 +318,114 @@ The goal is to help AI agents **navigate repositories and reason about code chan
 | Focused on question answering | Focused on AI‑assisted code modification |
 
 We include this reference to acknowledge the broader research direction of **graph‑guided reasoning with LLMs**, which influenced parts of the conceptual design of this project.
+
+---
+
+# Mini Literature Review
+
+This section summarizes research and tools related to **repository structure analysis and graph‑guided navigation for AI coding agents**. The goal is to position **AI Context Map** within the emerging ecosystem of tools that help AI systems understand large codebases.
+
+## Motivation
+
+AI coding agents frequently struggle with large repositories because they must dynamically infer:
+
+- architectural structure
+- dependencies between modules
+- entry points
+- the potential impact of code changes
+
+Without structural guidance, agents often explore repositories inefficiently, reading many irrelevant files and missing important dependencies.
+
+Recent research and tooling attempts to address this problem by introducing **repository graphs, structural summaries, or navigation layers** that help AI systems reason about codebases.
+
+---
+
+## Selected Related Work
+
+| Work | Core Idea | Method | Overlap with AI Context Map | Key Difference |
+|-----|-----|-----|-----|-----|
+| **Aider RepoMap** | Provide repository summaries for LLMs | Static extraction of symbols and files | Similar goal of providing structural overview | Focused on prompt summarization rather than navigation graphs |
+| **CodePlan (2023)** | Plan repository‑level code edits | Dependency analysis and change‑impact reasoning | Recognizes structural dependencies | Focuses on edit planning rather than navigation |
+| **RepoUnderstander (2024)** | Enable LLMs to understand entire repositories | Hierarchical repository representation | Shares goal of repository‑level understanding | Emphasizes exploration strategies |
+| **CodexGraph (2024)** | Graph database interface between code and LLMs | Graph database representation of repositories | Uses graph structure for navigation | Requires heavier infrastructure |
+| **RepoGraph (ICLR 2025)** | Graph representation of repositories | Static dependency graphs used during reasoning | Strong conceptual overlap | Focuses more on graph reasoning than lightweight mapping |
+| **GraphCodeAgent (2025)** | Improve AI coding with graph reasoning | Dual graph representation of code relationships | Similar graph‑guided approach | Focused on code generation performance |
+| **Code Graph Model (CGM, 2025)** | Integrate code graphs into LLM reasoning | Graph‑based retrieval and reasoning | Uses structural code knowledge | Integrates graphs directly into model reasoning |
+| **Repository Intelligence Graph (RIG, 2026)** | Deterministic structural map exposed to AI agents | Static repository analysis producing a graph | Very similar conceptual direction | Emphasizes full architectural knowledge graphs |
+
+---
+
+## Observations
+
+Several patterns appear across recent work:
+
+### 1. Repository Graphs Are Becoming Standard
+
+Many modern systems represent codebases as **graphs of dependencies, modules, and functions**. This suggests graph‑based representations are increasingly seen as a natural abstraction for reasoning about large repositories.
+
+### 2. AI Agents Benefit From Structural Priors
+
+Instead of exploring repositories blindly, systems increasingly provide:
+
+- dependency graphs
+- symbol maps
+- architecture summaries
+- change‑impact predictions
+
+These act as **structural priors** that guide the agent's reasoning process.
+
+### 3. Existing Systems Are Often Heavyweight
+
+Many current approaches rely on complex infrastructures such as:
+
+- graph databases
+- multi‑stage reasoning pipelines
+- model‑specific integrations
+
+This leaves room for **lightweight, model‑agnostic tools** that provide structural context without requiring large infrastructure.
+
+---
+
+## Positioning of AI Context Map
+
+AI Context Map aims to occupy a lightweight position within this ecosystem.
+
+The system focuses on generating a **deterministic structural navigation layer** for AI coding agents using simple static analysis.
+
+Key characteristics:
+
+- lightweight repository scanning
+- deterministic structural signals
+- model‑agnostic design
+- machine‑readable navigation routes
+- minimal infrastructure requirements
+
+Rather than embedding graphs directly into model reasoning, AI Context Map produces a **navigation context that external AI agents can use to guide exploration and modification tasks**.
+
+---
+
+## Potential Research Directions
+
+Future development could explore several directions:
+
+- task‑oriented repository navigation
+- automated change‑impact analysis
+- incremental repository mapping
+- integration with AI coding agents
+
+Possible evaluation metrics include:
+
+- reduction in repository files read by an agent
+- reduction in token consumption
+- faster bug localization
+- improved accuracy of multi‑file modifications
+
+---
+
+## Summary
+
+Providing repository structure to AI coding agents is an increasingly active research direction.
+
+AI Context Map explores a **lightweight, deterministic approach to structural navigation**, aiming to provide practical benefits without requiring complex infrastructure.
+
+Even if similar ideas appear in recent work, a simple and model‑agnostic implementation may still offer useful insights and practical value for AI‑assisted software development.
