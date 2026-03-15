@@ -53,9 +53,23 @@ class Hotspot:
 
 @dataclass(slots=True)
 class Anchor:
-    name: str
+    file: str
+    symbol: str
+    symbol_type: str
+    line: int | None = None
+    reasons: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class TaskRouteFile:
     path: str
-    note: str | None = None
+    reasons: list[str] = field(default_factory=list)
+
+
+@dataclass(slots=True)
+class RankedTaskRoute:
+    category: str
+    files: list[TaskRouteFile] = field(default_factory=list)
 
 
 @dataclass(slots=True)
@@ -72,8 +86,8 @@ class ContextDocument:
     navigation_map: NavigationMap
     hotspots: list[Hotspot]
     anchors: list[Anchor]
+    task_routes: dict[str, list[TaskRouteFile]]
     constraints: list[str]
     known_issues: list[str]
     provenance: ProvenanceInfo
     metrics: dict[str, Any] = field(default_factory=dict)
-

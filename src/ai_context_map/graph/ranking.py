@@ -11,6 +11,9 @@ class RankedFile:
     path: str
     score: float
     reasons: list[str]
+    in_degree: int = 0
+    out_degree: int = 0
+    centrality: float = 0.0
 
 
 ROLE_WEIGHTS = {
@@ -27,6 +30,8 @@ ROLE_WEIGHTS = {
 }
 
 SOURCE_ROOT_BONUS = 1.0
+CENTRALITY_IN_WEIGHT = 1.5
+CENTRALITY_OUT_WEIGHT = 0.5
 
 
 def rank_files(
@@ -34,9 +39,12 @@ def rank_files(
 ) -> list[RankedFile]:
     incoming = {path: 0 for path in nodes}
     outgoing = {path: 0 for path in nodes}
+    imported_by_api: set[str] = set()
     for edge in edges:
         incoming[edge.target] = incoming.get(edge.target, 0) + 1
         outgoing[edge.source] = outgoing.get(edge.source, 0) + 1
+        if nodes.get(edge.source) and nodes[edge.source].role == "api":
+            imported_by_api.add(edge.target)
 
     ranked: list[RankedFile] = []
     for path, node in nodes.items():
@@ -55,17 +63,42 @@ def rank_files(
         if out_degree:
             score += out_degree * 0.75
             reasons.append("high outgoing dependency count" if out_degree > 2 else "has outgoing dependencies")
+        centrality = round((in_degree * CENTRALITY_IN_WEIGHT) + (out_degree * CENTRALITY_OUT_WEIGHT), 2)
+        if centrality >= 3.0:
+            score += centrality
+            reasons.append("central in dependency graph")
         role_weight = ROLE_WEIGHTS.get(node.role, 0.0)
         if role_weight:
             score += role_weight
-            reasons.append(f'role classified as "{node.role}"')
+            if node.role == "business_logic":
+                reasons.append("located in core/service module")
+            elif node.role == "entrypoint":
+                reasons.append("filename suggests entrypoint")
+            else:
+                reasons.append(f'role classified as "{node.role}"')
+        if node.role == "api":
+            reasons.append("API module")
+        if path in imported_by_api:
+            reasons.append("imported by API layer")
         if path.startswith(("src/", "app/", "lib/")):
             score += SOURCE_ROOT_BONUS
             reasons.append("located in source directory")
+        if node.role in {"config", "test"} and score < 6.0:
+            score -= 1.5
+            reasons.append("deprioritized non-runtime file")
         if node.size_bytes > 2_000:
             score += 0.5
             reasons.append("larger implementation file")
-        ranked.append(RankedFile(path=path, score=round(score, 2), reasons=_unique(reasons)))
+        ranked.append(
+            RankedFile(
+                path=path,
+                score=round(score, 2),
+                reasons=_unique(reasons),
+                in_degree=in_degree,
+                out_degree=out_degree,
+                centrality=centrality,
+            )
+        )
 
     ranked.sort(key=lambda item: (-item.score, item.path))
     return ranked
@@ -79,4 +112,3 @@ def _unique(values: list[str]) -> list[str]:
             seen.add(value)
             result.append(value)
     return result
-

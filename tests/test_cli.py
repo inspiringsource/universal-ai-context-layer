@@ -10,7 +10,9 @@ runner = CliRunner()
 
 def test_cli_init_and_generate(tmp_path: Path) -> None:
     (tmp_path / "src").mkdir()
-    (tmp_path / "src" / "main.py").write_text("print('hello')\n", encoding="utf-8")
+    (tmp_path / "src" / "main.py").write_text("from app.service import run\n\nif __name__ == '__main__':\n    run()\n", encoding="utf-8")
+    (tmp_path / "src" / "app").mkdir()
+    (tmp_path / "src" / "app" / "service.py").write_text("def run():\n    return 1\n", encoding="utf-8")
 
     init_result = runner.invoke(app, ["init", str(tmp_path)])
     assert init_result.exit_code == 0
@@ -21,3 +23,8 @@ def test_cli_init_and_generate(tmp_path: Path) -> None:
     assert generate_result.exit_code == 0
     assert (tmp_path / ".ai" / "context.yaml").exists()
     assert "Project:" in generate_result.stdout
+
+    inspect_routes_result = runner.invoke(app, ["inspect-routes", str(tmp_path)])
+    assert inspect_routes_result.exit_code == 0
+    assert "Task routes:" in inspect_routes_result.stdout
+    assert "Top anchors:" in inspect_routes_result.stdout

@@ -1,0 +1,190 @@
+Metadata-Version: 2.4
+Name: ai-context-map
+Version: 0.1.0
+Summary: Generate a machine-readable repository context map for AI coding agents.
+Author: OpenAI Codex
+License: MIT
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: PyYAML>=6.0.1
+Requires-Dist: typer>=0.12.3
+Provides-Extra: dev
+Requires-Dist: pytest>=8.1.1; extra == "dev"
+Requires-Dist: ruff>=0.4.0; extra == "dev"
+
+# ai-context-map
+
+`ai-context-map` is a Python-first CLI that scans a repository and produces a compact, machine-readable context file for AI coding agents.
+
+It is not a human README replacement. It is a deterministic navigation map intended to help an AI agent answer one question quickly: which files and symbols should be inspected first before making a change?
+
+## Why it exists
+
+AI coding agents waste time rediscovering repository structure, entry points, important modules, and likely risk areas. This tool builds that map once, in a structured format, without requiring model calls or external services.
+
+## Navigation-focused capabilities
+
+- Scan a repository with sensible ignore rules
+- Detect Python and basic JS/TS source files
+- Parse local imports and build a lightweight dependency graph
+- Rank important files using filename, role, and lightweight graph signals
+- Explain file importance with deterministic reasons
+- Extract Python symbol anchors from already-important files
+- Suggest task routes for bugfixes, feature work, API changes, logic changes, config changes, and test work
+- Identify likely entry points, core modules, hotspots, and directory roles
+- Emit `.ai/context.yaml`
+- Initialize `.ai/history.yaml` and `.aicontext.toml`
+
+## Install locally
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+```
+
+## Usage
+
+Initialize support files:
+
+```bash
+aicontext init
+```
+
+Generate a context map for the current repository:
+
+```bash
+aicontext generate
+```
+
+Inspect top results without opening the YAML manually:
+
+```bash
+aicontext inspect
+```
+
+Inspect task routes, top anchors, and file importance reasons:
+
+```bash
+aicontext inspect-routes
+```
+
+Generate for another path:
+
+```bash
+aicontext generate /path/to/repo
+```
+
+## Output
+
+The main output is written to `.ai/context.yaml`.
+
+Example:
+
+```yaml
+aicontext_version: 2
+project:
+  name: example-repo
+  root: .
+  detected_languages:
+    - python
+architecture:
+  entry_points:
+    - path: src/main.py
+      confidence: 0.95
+      reasons:
+        - filename pattern matched "main"
+  core_modules:
+    - path: src/app/service.py
+      score: 12.0
+      reasons:
+        - high incoming dependency count
+        - central in dependency graph
+navigation_map:
+  directories:
+    - path: src
+      role: source_root
+  key_files:
+    - path: src/api/routes.py
+      role: api
+      importance: critical
+hotspots:
+  - path: src/app/service.py
+    reason: high centrality
+anchors:
+  - file: src/api/routes.py
+    symbol: list_items
+    symbol_type: route_handler
+    line: 8
+    reasons:
+      - contains route handlers
+task_routes:
+  api_change:
+    - path: src/api/routes.py
+      reasons:
+        - contains route handlers
+        - API module
+  model_or_logic_change:
+    - path: src/app/service.py
+      reasons:
+        - located in core/service module
+provenance:
+  enabled: false
+  history_file: .ai/history.yaml
+```
+
+## Anchors and routes
+
+Anchors are concise symbol pointers extracted from important Python files only. They surface high-value functions, classes, methods, route handlers, and entrypoints without dumping every symbol in the repository.
+
+Task routes are deterministic file lists keyed by change type. They help an AI agent start in the right part of the repository for tasks such as `api_change` or `model_or_logic_change` before reading the broader graph.
+
+## Configuration
+
+`aicontext init` creates `.aicontext.toml`:
+
+```toml
+include_paths = []
+exclude_paths = []
+languages = ["python", "javascript", "typescript"]
+enable_git_metadata = false
+output_path = ".ai/context.yaml"
+
+[filename_weights]
+main = 4.0
+app = 3.0
+server = 3.0
+cli = 3.0
+api = 2.5
+routes = 2.5
+config = 1.5
+service = 2.0
+index = 2.0
+```
+
+## Provenance roadmap
+
+V1 creates a stub `.ai/history.yaml`:
+
+```yaml
+history_version: 1
+entries: []
+```
+
+The code is structured so later versions can append repository change history with fields such as timestamp, actor type, model, prompt summary, files changed, notes, and review status.
+
+## Limitations
+
+- Symbol anchors are Python-first; JS/TS symbol extraction is still minimal
+- FastAPI route detection is heuristic and intentionally conservative
+- Task routes are deterministic heuristics, not semantic program analysis
+- Graph resolution is local-project focused and intentionally conservative
+- Architectural roles and importance reasons are heuristic, not authoritative
+- No LLM, IDE, provenance, or benchmarking integration in the navigation layer
+
+## Development
+
+```bash
+pytest
+ruff check .
+```

@@ -52,6 +52,23 @@ def inspect(path: Path = typer.Argument(Path("."), exists=True, file_okay=False,
         typer.echo(f"  - {hotspot['path']}: {hotspot['reason']}")
 
 
+@app.command("inspect-routes")
+def inspect_routes(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True)) -> None:
+    """Print task routes, top anchors, and importance reasons."""
+    document = inspect_context(path)
+    typer.echo("Task routes:")
+    for category, files in document.get("task_routes", {}).items():
+        typer.echo(f"{category}:")
+        for item in files[:3]:
+            typer.echo(f"  - {item['path']}: {', '.join(item.get('reasons', []))}")
+    typer.echo("Top anchors:")
+    for anchor in document.get("anchors", [])[:5]:
+        line = f":{anchor['line']}" if anchor.get("line") else ""
+        typer.echo(f"  - {anchor['file']}{line} -> {anchor['symbol']} [{anchor['symbol_type']}]")
+    typer.echo("Importance reasons:")
+    for module in document.get("architecture", {}).get("core_modules", [])[:5]:
+        typer.echo(f"  - {module['path']}: {', '.join(module.get('reasons', []))}")
+
+
 if __name__ == "__main__":
     app()
-

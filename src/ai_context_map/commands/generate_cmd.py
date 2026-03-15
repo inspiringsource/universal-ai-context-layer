@@ -9,6 +9,8 @@ from ai_context_map.emitter.yaml_writer import write_context_yaml
 from ai_context_map.graph.builder import GraphBuilder, graph_metrics
 from ai_context_map.graph.ranking import rank_files
 from ai_context_map.graph.roles import classify_directory_role
+from ai_context_map.navigation.anchors import build_anchors
+from ai_context_map.navigation.routes import build_task_routes
 from ai_context_map.models.context import (
     ContextDocument,
     CoreModule,
@@ -30,14 +32,20 @@ def generate_context(root: Path) -> ContextDocument:
     nodes, edges = GraphBuilder().build(scan_result)
     ranked = rank_files(nodes, edges, config)
     metrics = graph_metrics(edges)
+    anchors = build_anchors(root, nodes, ranked[:10])
+    task_routes = build_task_routes(nodes, edges, ranked)
 
     entry_points: list[EntryPoint] = []
     core_modules: list[CoreModule] = []
     key_files: list[KeyFile] = []
     hotspots: list[Hotspot] = []
 
-    for item in ranked[:10]:
+    for item in ranked:
         node = nodes[item.path]
+        if len(key_files) >= 8:
+            break
+        if node.role in {"test", "config"} and item.score < 8:
+            continue
         importance = "critical" if item.score >= 8 else "high" if item.score >= 4 else "medium"
         key_files.append(KeyFile(path=item.path, role=node.role, importance=importance))
         if node.role == "entrypoint" or any("main" in reason or "entrypoint" in reason for reason in item.reasons):
@@ -62,7 +70,7 @@ def generate_context(root: Path) -> ContextDocument:
         "layers": _infer_layers(nodes),
     }
     document = ContextDocument(
-        aicontext_version=1,
+        aicontext_version=2,
         project=ProjectSummary(
             name=root.resolve().name,
             root=".",
@@ -72,7 +80,8 @@ def generate_context(root: Path) -> ContextDocument:
         architecture=architecture,
         navigation_map=NavigationMap(directories=directories, key_files=key_files),
         hotspots=hotspots[:10],
-        anchors=[],
+        anchors=anchors,
+        task_routes=task_routes,
         constraints=[],
         known_issues=[],
         provenance=ProvenanceInfo(enabled=False, history_file=".ai/history.yaml"),
@@ -95,4 +104,3 @@ def _infer_layers(nodes: dict[str, object]) -> list[dict[str, str]]:
         if any(path.startswith(f"{directory}/") or path == directory for path in nodes):
             layers.append({"name": directory, "role": classify_directory_role(directory)})
     return layers
-

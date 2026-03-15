@@ -1,0 +1,2 @@
+[console_scripts]
+aicontext = ai_context_map.cli:app

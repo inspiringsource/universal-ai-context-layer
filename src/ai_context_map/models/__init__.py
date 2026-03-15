@@ -9,6 +9,7 @@ from ai_context_map.models.context import (
     NavigationMap,
     ProjectSummary,
     ProvenanceInfo,
+    TaskRouteFile,
 )
 from ai_context_map.models.graph import DependencyEdge, FileNode, ImportReference
 
@@ -26,5 +27,5 @@ __all__ = [
     "NavigationMap",
     "ProjectSummary",
     "ProvenanceInfo",
+    "TaskRouteFile",
 ]
-

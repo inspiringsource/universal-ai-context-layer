@@ -1,0 +1,264 @@
+aicontext_version: 2
+project:
+  name: AIcontextMap
+  root: .
+  detected_languages:
+  - python
+  summary: null
+architecture:
+  entry_points: []
+  core_modules:
+  - path: src/ai_context_map/models/graph.py
+    score: 37.5
+    reasons:
+    - high incoming dependency count
+    - central in dependency graph
+    - role classified as "data_model"
+  - path: src/ai_context_map/config.py
+    score: 31.0
+    reasons:
+    - filename pattern matched "config"
+    - high incoming dependency count
+    - central in dependency graph
+  - path: src/ai_context_map/models/context.py
+    score: 23.5
+    reasons:
+    - high incoming dependency count
+    - central in dependency graph
+    - role classified as "data_model"
+  - path: src/ai_context_map/graph/ranking.py
+    score: 21.5
+    reasons:
+    - high incoming dependency count
+    - has outgoing dependencies
+    - central in dependency graph
+  - path: src/ai_context_map/navigation/routes.py
+    score: 16.75
+    reasons:
+    - filename pattern matched "routes"
+    - high incoming dependency count
+    - high outgoing dependency count
+  - path: src/ai_context_map/scanner/walker.py
+    score: 16.5
+    reasons:
+    - high incoming dependency count
+    - high outgoing dependency count
+    - central in dependency graph
+  - path: src/ai_context_map/commands/generate_cmd.py
+    score: 16.25
+    reasons:
+    - has incoming dependencies
+    - high outgoing dependency count
+    - central in dependency graph
+  - path: src/ai_context_map/graph/builder.py
+    score: 14.75
+    reasons:
+    - high incoming dependency count
+    - high outgoing dependency count
+    - central in dependency graph
+  layers:
+  - name: src
+    role: source_root
+  - name: tests
+    role: tests
+navigation_map:
+  directories:
+  - path: src
+    role: source_root
+  - path: tests
+    role: tests
+  key_files:
+  - path: src/ai_context_map/models/graph.py
+    role: data_model
+    importance: critical
+  - path: src/ai_context_map/config.py
+    role: config
+    importance: critical
+  - path: src/ai_context_map/models/context.py
+    role: data_model
+    importance: critical
+  - path: src/ai_context_map/graph/ranking.py
+    role: unknown
+    importance: critical
+  - path: src/ai_context_map/navigation/routes.py
+    role: api
+    importance: critical
+  - path: src/ai_context_map/scanner/walker.py
+    role: unknown
+    importance: critical
+  - path: src/ai_context_map/commands/generate_cmd.py
+    role: unknown
+    importance: critical
+  - path: src/ai_context_map/graph/builder.py
+    role: unknown
+    importance: critical
+hotspots:
+- path: src/ai_context_map/models/graph.py
+  reason: high centrality
+- path: src/ai_context_map/config.py
+  reason: high centrality
+- path: src/ai_context_map/models/context.py
+  reason: high centrality
+- path: src/ai_context_map/graph/ranking.py
+  reason: high centrality
+- path: src/ai_context_map/navigation/routes.py
+  reason: high centrality
+- path: src/ai_context_map/scanner/walker.py
+  reason: high centrality
+- path: src/ai_context_map/graph/builder.py
+  reason: high centrality
+anchors:
+- file: src/ai_context_map/models/graph.py
+  symbol: ImportReference
+  symbol_type: class
+  line: 7
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/models/graph.py
+  symbol: FileNode
+  symbol_type: class
+  line: 15
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/models/graph.py
+  symbol: DependencyEdge
+  symbol_type: class
+  line: 24
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/config.py
+  symbol: Config
+  symbol_type: class
+  line: 28
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/config.py
+  symbol: config_path
+  symbol_type: function
+  line: 51
+  reasons:
+  - top-level function
+- file: src/ai_context_map/config.py
+  symbol: load_config
+  symbol_type: function
+  line: 55
+  reasons:
+  - top-level function
+- file: src/ai_context_map/models/context.py
+  symbol: ProjectSummary
+  symbol_type: class
+  line: 8
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/models/context.py
+  symbol: EntryPoint
+  symbol_type: class
+  line: 16
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/models/context.py
+  symbol: CoreModule
+  symbol_type: class
+  line: 23
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/graph/ranking.py
+  symbol: RankedFile
+  symbol_type: class
+  line: 10
+  reasons:
+  - top-level class definition
+- file: src/ai_context_map/graph/ranking.py
+  symbol: rank_files
+  symbol_type: function
+  line: 37
+  reasons:
+  - top-level function
+- file: src/ai_context_map/graph/ranking.py
+  symbol: _unique
+  symbol_type: function
+  line: 107
+  reasons:
+  - top-level function
+task_routes:
+  bugfix:
+  - path: src/ai_context_map/models/graph.py
+    reasons:
+    - central in dependency graph
+  - path: src/ai_context_map/config.py
+    reasons:
+    - central in dependency graph
+  - path: src/ai_context_map/models/context.py
+    reasons:
+    - central in dependency graph
+  - path: src/ai_context_map/graph/ranking.py
+    reasons:
+    - central in dependency graph
+  - path: src/ai_context_map/navigation/routes.py
+    reasons:
+    - central in dependency graph
+    - likely execution path for behavior fixes
+  feature_work:
+  - path: src/ai_context_map/models/graph.py
+    reasons:
+    - central in dependency graph
+  - path: src/ai_context_map/config.py
+    reasons:
+    - central in dependency graph
+  - path: src/ai_context_map/models/context.py
+    reasons:
+    - central in dependency graph
+  - path: src/ai_context_map/navigation/routes.py
+    reasons:
+    - supports new feature wiring
+    - central in dependency graph
+  - path: src/ai_context_map/graph/ranking.py
+    reasons:
+    - central in dependency graph
+  api_change:
+  - path: src/ai_context_map/navigation/routes.py
+    reasons:
+    - API module
+  - path: src/ai_context_map/cli.py
+    reasons:
+    - app/main entrypoint
+  - path: tests/test_cli.py
+    reasons:
+    - app/main entrypoint
+  model_or_logic_change: []
+  config_change:
+  - path: src/ai_context_map/config.py
+    reasons:
+    - configuration entrypoint
+  test_work:
+  - path: src/ai_context_map/models/graph.py
+    reasons:
+    - module referenced by tests
+  - path: src/ai_context_map/config.py
+    reasons:
+    - module referenced by tests
+  - path: src/ai_context_map/models/context.py
+    reasons:
+    - module referenced by tests
+  - path: src/ai_context_map/graph/ranking.py
+    reasons:
+    - module referenced by tests
+  - path: src/ai_context_map/navigation/routes.py
+    reasons:
+    - module referenced by tests
+constraints: []
+known_issues: []
+provenance:
+  enabled: false
+  history_file: .ai/history.yaml
+metrics:
+  files_scanned: 49
+  source_files_analyzed: 40
+  graph_edges: 56
+  generation_time_ms: 26.55
+  top_ranked_files:
+  - src/ai_context_map/models/graph.py
+  - src/ai_context_map/config.py
+  - src/ai_context_map/models/context.py
+  - src/ai_context_map/graph/ranking.py
+  - src/ai_context_map/navigation/routes.py
