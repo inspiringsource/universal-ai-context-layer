@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# VSCode
+.vscode/
+
+# Logs
+*.log
+
+# AI Context Map output (optional)
+.ai/context.yaml

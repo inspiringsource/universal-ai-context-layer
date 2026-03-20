@@ -464,6 +464,18 @@ Possible evaluation metrics include:
 
 ---
 
+## Project Scope
+
+AI Context Map was originally built to support personal AI‑assisted development workflows, with an emphasis on making repository analysis more predictable and easier to inspect.
+
+The project is intended as a lightweight, deterministic, and inspectable solution for repository analysis rather than a comprehensive research platform or tightly coupled agent stack.
+
+Similar ideas appear across recent research and tooling, which reinforces the value of structural repository representations as a practical interface for AI systems.
+
+This repository is public to document the approach, invite experimentation, and encourage others to improve or optimize the graph extraction, ranking, graph signals, and navigation strategies.
+
+---
+
 ## Summary
 
 Providing repository structure to AI coding agents is an increasingly active research direction.
@@ -471,3 +483,9 @@ Providing repository structure to AI coding agents is an increasingly active res
 AI Context Map explores a **lightweight, deterministic approach to structural navigation**, aiming to provide practical benefits without requiring complex infrastructure.
 
 Even if similar ideas appear in recent work, a simple and model‑agnostic implementation may still offer useful insights and practical value for AI‑assisted software development.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
