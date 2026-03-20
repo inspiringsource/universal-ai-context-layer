@@ -4,11 +4,20 @@
 
 Instead of forcing an AI to rediscover repository structure through repeated search and file exploration, the tool builds a **deterministic structural map** of the project ahead of time.
 
+**A lightweight, deterministic alternative to embedding-based or prompt-based repo understanding tools.**
+
 The goal is simple:
 
 > Help an AI agent quickly determine **where to look first before making a change**.
 
 The generated context highlights entry points, core modules, dependency hotspots, important symbols, and task-oriented navigation routes.
+
+
+## Positioning
+
+AI Context Map is a lightweight, deterministic alternative to embedding-based or prompt-based repository understanding tools.
+
+Instead of relying on vector search or LLM summarization, it builds an inspectable structural map of the repository using static analysis.
 
 ---
 
