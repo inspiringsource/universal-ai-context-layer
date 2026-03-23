@@ -495,6 +495,17 @@ Even if similar ideas appear in recent work, a simple and model‑agnostic imple
 
 ---
 
+## Academic Contact
+
+**Prof. Dr. Michael Graber**  
+Lecturer in Machine Learning and Data Science  
+
+**Contact**  
+- Phone: +41 56 202 84 08 (Direct)  
+- Email: michael.graber@fhnw.ch
+
+---
+
 ## License
 
 This project is licensed under the MIT License.
