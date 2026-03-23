@@ -15,11 +15,12 @@ build/
 venv/
 env/
 
-# VSCode
+# Editors and IDEs
 .vscode/
+.idea/
 
 # Logs
 *.log
 
-# AI Context Map output (optional)
+# AI Context Map output
 .ai/context.yaml
