@@ -33,3 +33,22 @@ def test_cli_init_and_generate(tmp_path: Path) -> None:
     assert inspect_routes_result.exit_code == 0
     assert "Task routes:" in inspect_routes_result.stdout
     assert "Top anchors:" in inspect_routes_result.stdout
+
+
+def test_cli_plan_outputs_task_sections(tmp_path: Path) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "api").mkdir()
+    (tmp_path / "src" / "api" / "auth_routes.py").write_text("from src.core.auth_service import login\n", encoding="utf-8")
+    (tmp_path / "src" / "core").mkdir()
+    (tmp_path / "src" / "core" / "auth_service.py").write_text("def login():\n    return True\n", encoding="utf-8")
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_auth.py").write_text("from src.core.auth_service import login\n", encoding="utf-8")
+
+    plan_result = runner.invoke(app, ["plan", "fix failing auth test", str(tmp_path)])
+
+    assert plan_result.exit_code == 0
+    assert "Read first:" in plan_result.stdout
+    assert "Likely edit candidates:" in plan_result.stdout
+    assert "Likely impacted files:" in plan_result.stdout
+    assert "Likely tests:" in plan_result.stdout
+    assert "src/api/auth_routes.py" in plan_result.stdout or "src/core/auth_service.py" in plan_result.stdout
