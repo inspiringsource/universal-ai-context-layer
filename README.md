@@ -64,6 +64,7 @@ The result is faster inspection, less token usage, and more reliable edits.
 - Extract Python symbol anchors from high-value files
 - Identify entry points, core modules, and dependency hotspots
 - Suggest task-specific navigation routes
+- Plan task-oriented investigation using structural ranking, keyword priors, and repository memory
 - Emit `.ai/context.yaml`
 - Initialize `.ai/history.yaml` and `.aicontext.toml`
 
@@ -145,11 +146,33 @@ Inspect navigation routes and reasoning signals:
 aicontext inspect-routes
 ```
 
+Plan where to read and edit for a natural-language task:
+
+```
+aicontext plan "fix login bug"
+```
+
+Emit the same plan as JSON:
+
+```
+aicontext plan "fix login bug" --json
+```
+
 Generate context for another path:
 
 ```
 aicontext generate /path/to/repo
 ```
+
+The planner combines the existing structural ranking with lightweight task keyword priors and repository memory from recent co-change history.
+Impacted-file suggestions are derived from likely edit candidates using structural neighbors and repository memory.
+
+Planner output sections:
+
+- `Read first`: best starting points for investigation
+- `Likely edit candidates`: files most likely to need changes
+- `Likely impacted files`: nearby files likely affected by the change
+- `Likely tests`: tests that look relevant to validate or update
 
 ---
 
