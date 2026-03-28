@@ -8,7 +8,7 @@ from ai_context_map.commands.generate_cmd import generate_context
 from ai_context_map.commands.init_cmd import run_init
 from ai_context_map.commands.inspect_cmd import inspect_context
 from ai_context_map.commands.plan_cmd import build_plan
-from ai_context_map.planner import render_task_plan
+from ai_context_map.planner import render_task_plan, render_task_plan_json
 
 
 app = typer.Typer(help="Generate AI-readable repository context maps.")
@@ -76,9 +76,13 @@ def inspect_routes(path: Path = typer.Argument(Path("."), exists=True, file_okay
 def plan(
     task: str = typer.Argument(..., help="Natural-language task description."),
     path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True),
+    json_output: bool = typer.Option(False, "--json", help="Emit the plan in JSON format."),
 ) -> None:
     """Print a task-aware plan using ranking, task priors, and repository memory."""
     plan_result = build_plan(path, task)
+    if json_output:
+        typer.echo(render_task_plan_json(plan_result))
+        return
     typer.echo(render_task_plan(plan_result))
 
 

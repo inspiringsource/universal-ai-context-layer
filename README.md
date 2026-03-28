@@ -152,6 +152,12 @@ Plan where to read and edit for a natural-language task:
 aicontext plan "fix login bug"
 ```
 
+Emit the same plan as JSON:
+
+```
+aicontext plan "fix login bug" --json
+```
+
 Generate context for another path:
 
 ```
@@ -159,6 +165,7 @@ aicontext generate /path/to/repo
 ```
 
 The planner combines the existing structural ranking with lightweight task keyword priors and repository memory from recent co-change history.
+Impacted-file suggestions are derived from likely edit candidates using structural neighbors and repository memory.
 
 Planner output sections:
 

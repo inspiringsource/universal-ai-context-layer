@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import json
 from math import isclose
 from pathlib import Path
 import subprocess
@@ -11,7 +12,7 @@ from ai_context_map.graph.ranking import RankedFile, rank_files
 from ai_context_map.memory.git_history import extract_git_cochange_memory
 from ai_context_map.memory.io import read_memory_yaml
 from ai_context_map.memory.models import RepositoryMemory
-from ai_context_map.models.graph import FileNode
+from ai_context_map.models.graph import DependencyEdge, FileNode
 from ai_context_map.scanner.walker import scan_repository
 
 
@@ -21,6 +22,11 @@ PLANNER_TASK_PRIOR_WEIGHT = 0.35
 PLANNER_MEMORY_WEIGHT = 0.15
 TASK_RELATED_TEST_BOOST = 2.0
 SECTION_LIMIT = 5
+IMPACT_DEPENDENT_BOOST = 3.0
+IMPACT_NEIGHBOR_BOOST = 1.5
+IMPACT_MEMORY_BOOST = 2.0
+IMPACT_RELATED_TEST_BOOST = 2.5
+IMPACT_STRUCTURAL_TIEBREAKER = 0.25
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,26 +102,29 @@ def plan_task(root: Path, task: str) -> TaskPlan:
     read_first_paths = {item.path for item in read_first}
 
     edit_candidates = _select_top(
-        [item for item in candidates if nodes[item.path].role != "test"],
+        [item for item in candidates if not _is_test_like_path(item.path)],
         limit=SECTION_LIMIT,
     )
     edit_paths = {item.path for item in edit_candidates}
 
-    impacted_candidates = [
-        item
-        for item in candidates
-        if item.path not in read_first_paths
-        and item.path not in edit_paths
-        and nodes[item.path].role != "test"
-        and any(reason.startswith("frequently co-changed with") for reason in item.reasons)
-    ]
-    if not impacted_candidates:
-        impacted_candidates = [
-            item
-            for item in candidates
-            if item.path not in read_first_paths and item.path not in edit_paths and nodes[item.path].role != "test"
-        ]
-    likely_impacted_files = _select_top(impacted_candidates, limit=SECTION_LIMIT)
+    impacted_candidates = build_impacted_candidates(
+        nodes=nodes,
+        edges=edges,
+        ranked=ranked,
+        edit_candidates=edit_candidates,
+        memory=memory,
+    )
+    likely_impacted_files = _select_top(
+        [item for item in impacted_candidates if item.path not in read_first_paths and item.path not in edit_paths],
+        limit=SECTION_LIMIT,
+    )
+    if not likely_impacted_files:
+        likely_impacted_files = _select_top(
+            [item for item in impacted_candidates if item.path not in edit_paths],
+            limit=SECTION_LIMIT,
+        )
+    if not likely_impacted_files:
+        likely_impacted_files = _select_top(impacted_candidates, limit=SECTION_LIMIT)
 
     likely_tests = _select_top(_build_test_candidates(candidates, edit_candidates), limit=SECTION_LIMIT)
 
@@ -167,6 +176,57 @@ def build_plan_candidates(
 
     candidates.sort(key=lambda item: (-item.score, item.path))
     return candidates
+
+
+def build_impacted_candidates(
+    nodes: dict[str, FileNode],
+    edges: list[DependencyEdge],
+    ranked: list[RankedFile],
+    edit_candidates: list[PlannedFile],
+    memory: RepositoryMemory | None = None,
+) -> list[PlannedFile]:
+    if not edit_candidates:
+        return []
+
+    incoming_neighbors, outgoing_neighbors = _build_graph_neighbors(edges, nodes)
+    memory_neighbors = _build_memory_neighbors(memory, nodes)
+    structural_scores = _normalize_scores({item.path: item.score for item in ranked})
+    edit_paths = [item.path for item in edit_candidates]
+    related_tests = _build_related_test_map(nodes, incoming_neighbors)
+
+    scores: dict[str, float] = {}
+    reasons: dict[str, list[str]] = {}
+    for selected_path in edit_paths:
+        for path in incoming_neighbors.get(selected_path, []):
+            if path == selected_path:
+                continue
+            scores[path] = scores.get(path, 0.0) + IMPACT_DEPENDENT_BOOST
+            reasons.setdefault(path, []).append("depends on selected edit candidate")
+        for path in outgoing_neighbors.get(selected_path, []):
+            if path == selected_path:
+                continue
+            scores[path] = scores.get(path, 0.0) + IMPACT_NEIGHBOR_BOOST
+            reasons.setdefault(path, []).append("neighboring module in dependency graph")
+        for path, weight in memory_neighbors.get(selected_path, []):
+            if path == selected_path:
+                continue
+            scores[path] = scores.get(path, 0.0) + (weight * IMPACT_MEMORY_BOOST)
+            reasons.setdefault(path, []).append("frequently co-changed with selected file")
+        for path in related_tests.get(selected_path, []):
+            if path == selected_path:
+                continue
+            scores[path] = scores.get(path, 0.0) + IMPACT_RELATED_TEST_BOOST
+            reasons.setdefault(path, []).append("appears to be a related test file")
+
+    impacted: list[PlannedFile] = []
+    for path in sorted(scores):
+        if path not in nodes:
+            continue
+        score = scores[path] + (structural_scores.get(path, 0.0) * IMPACT_STRUCTURAL_TIEBREAKER)
+        impacted.append(PlannedFile(path=path, score=round(score, 4), reasons=_unique(reasons.get(path, []))[:3]))
+
+    impacted.sort(key=lambda item: (-item.score, item.path))
+    return impacted
 
 
 def task_prior_scores(
@@ -247,6 +307,20 @@ def render_task_plan(plan: TaskPlan) -> str:
     return "\n".join(lines)
 
 
+def render_task_plan_json(plan: TaskPlan) -> str:
+    return json.dumps(task_plan_to_dict(plan), indent=2)
+
+
+def task_plan_to_dict(plan: TaskPlan) -> dict[str, object]:
+    return {
+        "task": plan.task,
+        "read_first": [_planned_file_to_dict(item) for item in plan.read_first],
+        "edit_candidates": [_planned_file_to_dict(item) for item in plan.likely_edit_candidates],
+        "impacted_files": [_planned_file_to_dict(item) for item in plan.likely_impacted_files],
+        "likely_tests": [_planned_file_to_dict(item) for item in plan.likely_tests],
+    }
+
+
 def _render_section(title: str, items: list[PlannedFile]) -> list[str]:
     lines = [f"{title}:"]
     if not items:
@@ -258,12 +332,19 @@ def _render_section(title: str, items: list[PlannedFile]) -> list[str]:
     return lines
 
 
+def _planned_file_to_dict(item: PlannedFile) -> dict[str, object]:
+    return {
+        "path": item.path,
+        "reasons": list(item.reasons),
+        "score": item.score,
+    }
+
+
 def _build_test_candidates(candidates: list[PlannedFile], edit_candidates: list[PlannedFile]) -> list[PlannedFile]:
     edit_module_keys = {_module_key(item.path) for item in edit_candidates if _module_key(item.path)}
     test_candidates: list[PlannedFile] = []
     for item in candidates:
-        lowered = item.path.lower()
-        if "test" not in lowered and "spec" not in lowered:
+        if not _is_test_like_path(item.path):
             continue
         score = item.score
         reasons = list(item.reasons)
@@ -285,13 +366,75 @@ def _structural_reason(item: RankedFile) -> str | None:
 def _module_to_test_paths(nodes: dict[str, FileNode]) -> dict[str, list[str]]:
     mapping: dict[str, list[str]] = {}
     for path, node in nodes.items():
-        if node.role != "test":
+        if node.role != "test" and not _is_test_like_path(path):
             continue
         module_key = _module_key(path)
         if not module_key:
             continue
         mapping.setdefault(module_key, []).append(path)
     return mapping
+
+
+def _build_related_test_map(
+    nodes: dict[str, FileNode], incoming_neighbors: dict[str, list[str]]
+) -> dict[str, list[str]]:
+    module_to_tests = _module_to_test_paths(nodes)
+    related: dict[str, list[str]] = {}
+    for path, node in nodes.items():
+        if node.role == "test" or _is_test_like_path(path):
+            continue
+        candidates = list(module_to_tests.get(_module_key(path), []))
+        for dependent in incoming_neighbors.get(path, []):
+            if nodes.get(dependent) and (nodes[dependent].role == "test" or _is_test_like_path(dependent)):
+                candidates.append(dependent)
+        related[path] = sorted(_unique(candidates))
+    return related
+
+
+def _build_graph_neighbors(
+    edges: list[DependencyEdge], nodes: dict[str, FileNode]
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    incoming: dict[str, set[str]] = {path: set() for path in nodes}
+    outgoing: dict[str, set[str]] = {path: set() for path in nodes}
+    for edge in sorted(edges, key=lambda item: (item.source, item.target)):
+        if edge.source not in nodes or edge.target not in nodes:
+            continue
+        incoming[edge.target].add(edge.source)
+        outgoing[edge.source].add(edge.target)
+    return (
+        {path: sorted(neighbors) for path, neighbors in incoming.items()},
+        {path: sorted(neighbors) for path, neighbors in outgoing.items()},
+    )
+
+
+def _build_memory_neighbors(
+    memory: RepositoryMemory | None, nodes: dict[str, FileNode]
+) -> dict[str, list[tuple[str, float]]]:
+    if memory is None:
+        return {}
+
+    neighbor_weights: dict[str, dict[str, float]] = {}
+    for file_memory in sorted(memory.files, key=lambda item: item.path):
+        if file_memory.path not in nodes:
+            continue
+        for link in sorted(file_memory.related, key=lambda item: item.path):
+            if link.path not in nodes or link.path == file_memory.path:
+                continue
+            neighbor_weights.setdefault(file_memory.path, {})
+            neighbor_weights[file_memory.path][link.path] = max(
+                neighbor_weights[file_memory.path].get(link.path, 0.0),
+                link.weight,
+            )
+            neighbor_weights.setdefault(link.path, {})
+            neighbor_weights[link.path][file_memory.path] = max(
+                neighbor_weights[link.path].get(file_memory.path, 0.0),
+                link.weight,
+            )
+
+    return {
+        path: sorted(related.items(), key=lambda item: (-item[1], item[0]))
+        for path, related in sorted(neighbor_weights.items())
+    }
 
 
 def _module_key(path: str) -> str:
@@ -303,6 +446,20 @@ def _module_key(path: str) -> str:
         if stem.endswith(suffix):
             stem = stem[: -len(suffix)]
     return stem
+
+
+def _is_test_like_path(path: str) -> bool:
+    lowered_parts = [part.lower() for part in Path(path).parts]
+    stem = Path(path).stem.lower()
+    return (
+        any(part in {"test", "tests", "spec", "specs"} for part in lowered_parts)
+        or stem == "test"
+        or stem == "spec"
+        or stem.startswith("test_")
+        or stem.endswith("_test")
+        or stem.endswith(".test")
+        or stem.endswith(".spec")
+    )
 
 
 def _select_top(items: list[PlannedFile], limit: int) -> list[PlannedFile]:
