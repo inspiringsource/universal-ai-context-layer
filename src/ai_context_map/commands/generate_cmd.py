@@ -5,7 +5,7 @@ from pathlib import Path
 from time import perf_counter
 
 from ai_context_map.config import load_config
-from ai_context_map.emitter.yaml_writer import write_context_yaml
+from ai_context_map.emitter.yaml_writer import write_context_yaml, write_memory_yaml
 from ai_context_map.graph.builder import GraphBuilder, graph_metrics
 from ai_context_map.graph.ranking import rank_files
 from ai_context_map.graph.roles import classify_directory_role
@@ -22,6 +22,7 @@ from ai_context_map.models.context import (
     ProjectSummary,
     ProvenanceInfo,
 )
+from ai_context_map.repository_memory import build_repository_memory
 from ai_context_map.scanner.walker import scan_repository
 
 
@@ -117,6 +118,8 @@ def generate_context(root: Path) -> ContextDocument:
     )
     output_path = root / config.output_path
     write_context_yaml(document, output_path)
+    memory_document = build_repository_memory(scan_result, nodes, edges, ranked, task_routes)
+    write_memory_yaml(memory_document, root / ".ai" / "memory.yaml")
     return document
 
 

@@ -24,3 +24,7 @@ env/
 
 # AI Context Map output
 .ai/context.yaml
+
+# Checkpoints
+__pycache__/
+*.pyc

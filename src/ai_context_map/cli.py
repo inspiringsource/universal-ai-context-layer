@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from dataclasses import asdict
 from pathlib import Path
 
 import typer
@@ -7,6 +9,7 @@ import typer
 from ai_context_map.commands.generate_cmd import generate_context
 from ai_context_map.commands.init_cmd import run_init
 from ai_context_map.commands.inspect_cmd import inspect_context
+from ai_context_map.commands.plan_cmd import plan_task_for_repository
 
 
 app = typer.Typer(help="Generate AI-readable repository context maps.")
@@ -68,6 +71,35 @@ def inspect_routes(path: Path = typer.Argument(Path("."), exists=True, file_okay
     typer.echo("Importance reasons:")
     for module in document.get("architecture", {}).get("core_modules", [])[:5]:
         typer.echo(f"  - {module['path']}: {', '.join(module.get('reasons', []))}")
+
+
+@app.command()
+def plan(
+    task: str = typer.Argument(..., help="Task description to plan against the repository."),
+    path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True),
+    json_output: bool = typer.Option(False, "--json", help="Emit the plan as JSON."),
+) -> None:
+    """Plan a repository task using memory-first narrowing and structural refinement."""
+    plan_result = plan_task_for_repository(path, task)
+    if json_output:
+        typer.echo(json.dumps(asdict(plan_result), indent=2))
+        return
+    typer.echo("Read first:")
+    for item in plan_result.read_first:
+        typer.echo(f"  - {item.path}: {', '.join(item.reasons)}")
+    typer.echo("Edit candidates:")
+    for item in plan_result.edit_candidates:
+        typer.echo(f"  - {item.path}: {', '.join(item.reasons)}")
+    typer.echo("Impacted files:")
+    for item in plan_result.impacted_files:
+        typer.echo(f"  - {item.path}: {', '.join(item.reasons)}")
+    typer.echo("Likely tests:")
+    for item in plan_result.likely_tests:
+        typer.echo(f"  - {item.path}: {', '.join(item.reasons)}")
+    if plan_result.working_cluster:
+        typer.echo("Working cluster:")
+        for item in plan_result.working_cluster:
+            typer.echo(f"  - {item.path}: {', '.join(item.reasons)}")
 
 
 if __name__ == "__main__":
