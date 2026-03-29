@@ -34,6 +34,9 @@ Typical behavior:
 
 `ai-context-map` precomputes a **repository navigation layer** so an AI can start from the most relevant locations immediately.
 
+The planner now uses `.ai/memory.yaml` first to narrow likely repository regions, then refines `read_first`, `edit_candidates`, `impacted_files`, and `likely_tests` inside that smaller working set.
+When the memory signals are strong enough, it also carries a compact working cluster forward so nearby logic, config/model, and test files stay grouped coherently.
+
 Instead of:
 
 ```
@@ -64,7 +67,7 @@ The result is faster inspection, less token usage, and more reliable edits.
 - Extract Python symbol anchors from high-value files
 - Identify entry points, core modules, and dependency hotspots
 - Suggest task-specific navigation routes
-- Emit `.ai/context.yaml`
+- Emit `.ai/context.yaml` and `.ai/memory.yaml`
 - Initialize `.ai/history.yaml` and `.aicontext.toml`
 
 The tool intentionally avoids LLM calls and external services so the output remains **deterministic and reproducible**.
