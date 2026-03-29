@@ -1,231 +1,284 @@
 # AI Context Map
 
-`ai-context-map` is a lightweight CLI that builds a deterministic repository memory and planning layer for AI coding agents.
+`ai-context-map` is a lightweight CLI that builds a **deterministic repository memory and planning layer** for AI coding agents.
 
-Instead of forcing an AI to rediscover repository structure through repeated search and file exploration, the tool precomputes a structured memory of the codebase and applies task-aware planning to guide navigation.
+Instead of forcing an AI to rediscover repository structure through repeated search and file exploration, the tool precomputes a **structured memory of the codebase** and applies **task-aware planning** to guide navigation.
 
-A lightweight, deterministic alternative to embedding-based or prompt-based repo understanding tools.
-
-The goal is simple:
-
-Help an AI agent quickly determine where to look first before making a change.
-
-The system extends beyond static mapping by introducing:
-
-- a repository memory layer (.ai/memory.yaml)
-- memory-first planning
-- task-focused working clusters
-
-This allows AI agents to operate on a coherent working area, not just isolated files.
+**A lightweight, deterministic alternative to embedding-based or prompt-based repo understanding tools.**
 
 ---
 
-## Positioning
+## Core Idea
 
-AI Context Map is a lightweight, deterministic alternative to embedding-based or prompt-based repository understanding tools.
+> Provide a **deterministic, inspectable, precomputed navigation + memory layer** so AI agents know **where to look and how to act before touching code**.
 
-It combines:
-- structural analysis
-- repository memory
-- task-aware planning
+---
 
-to guide AI agents toward the most relevant working areas before performing modifications.
+## System Overview
 
-The system is fully deterministic, inspectable, and model-agnostic.
+AI Context Map introduces **three core layers**:
+
+1. **Structural Mapping** (`.ai/context.yaml`)
+2. **Repository Memory** (`.ai/memory.yaml`)
+3. **Task-Aware Planning** (CLI `plan`)
+
+This transforms AI behavior from:
+
+AI → search → random reads → guess structure
+
+into:
+
+Repository → memory → guided planning → focused execution
 
 ---
 
 # Why this exists
 
-AI coding agents often struggle with large repositories because they must first infer architecture from raw files.
+AI coding agents struggle with:
 
-Typical behavior:
+- large repositories
+- implicit architecture
+- hidden dependencies
+- multi-file coupling
 
-- searching randomly across the repo
-- opening many irrelevant files
+Typical failure modes:
+
+- opening irrelevant files
 - missing central modules
-- making narrow edits that break downstream code
+- making local fixes that break global logic
+- excessive token usage
 
-ai-context-map precomputes a repository navigation + memory layer so an AI can start from the most relevant locations immediately.
-
-Instead of:
-
-AI → search → read random files → infer structure
-
-The workflow becomes:
-
-Repository → memory + structure → guided planning → code change
-
-The result is faster inspection, less token usage, and more reliable edits.
+AI Context Map solves this by **externalizing structure and memory before inference**.
 
 ---
 
 # Core capabilities
 
-- Scan a repository with sensible ignore rules
-- Detect Python and basic JS/TS source files
-- Parse local imports and build a lightweight dependency graph
-- Rank important files using deterministic structural signals (PageRank + heuristics)
+### Structural Analysis
+- Repository scanning with ignore rules
+- Python + basic JS/TS support
+- Dependency graph construction
 
-- Build a repository memory layer (.ai/memory.yaml) including:
-  - repository zones (api, service, config, etc.)
-  - cluster seeds (related file groups)
-  - test mappings
-  - central files
-  - task-route priors
+### Deterministic Ranking
+- PageRank centrality
+- filename heuristics
+- entrypoint detection
+- directory roles
 
-- Perform memory-first task planning
-- Generate task-focused working clusters for coherent multi-file changes
-- Explain file selection with traceable reasoning
+### Repository Memory (NEW)
+Generated in `.ai/memory.yaml`:
 
-- Emit:
-  - .ai/context.yaml
-  - .ai/memory.yaml
+- repository zones (api, service, config, etc.)
+- cluster seeds (graph + directory + role + test relationships)
+- test mappings (implementation ↔ tests)
+- central files (top-ranked nodes)
+- task-route priors
 
-- Initialize:
-  - .ai/history.yaml
-  - .aicontext.toml
+### Planning Engine (NEW)
 
-The tool intentionally avoids LLM calls and external services so the output remains deterministic and reproducible.
+```
+aicontext plan "<task>"
+```
 
----
+Produces:
 
-# Ranking Mechanism
-
-AI Context Map ranks files using a deterministic hybrid scoring model built from structural signals extracted from the repository.
-
-1. Dependency Graph Construction  
-2. PageRank centrality  
-3. Heuristic structural signals  
-4. Score blending  
-
-This balances architectural centrality and role-based heuristics.
-
----
-
-# Task Planning
-
-aicontext plan "<task description>"
-
-Example:
-
-aicontext plan "update api route behavior"
-
-Output:
 - read_first
 - edit_candidates
 - impacted_files
 - likely_tests
 - working_cluster
 
-JSON:
-aicontext plan "<task>" --json
+### Working Clusters
+
+Instead of isolated files, the system groups:
+
+- implementation
+- dependencies
+- tests
+- related modules
 
 ---
 
-# Architectural Direction
+# Architectural Design
 
-Two-stage design:
+## Two-Stage Model
 
-1. Repository memory (cheap, precomputed)
-2. Task-specific planning (focused, dynamic)
+### 1. Repository Memory (cheap)
+- precomputed
+- static
+- deterministic
 
-Separates memory (cheap) from reasoning (expensive).
+### 2. Task Planning (focused)
+- dynamic
+- task-aware
+- memory-constrained
+
+This follows a key principle:
+
+> Separate memory (cheap) from reasoning (expensive)
 
 ---
 
-# Install locally
+# Ranking Mechanism
 
+1. Dependency Graph Construction  
+2. PageRank Centrality  
+3. Heuristic Signals  
+4. Score Blending  
+
+Outputs:
+
+- core_modules
+- hotspots
+- key_files
+
+---
+
+# Memory Layer Design
+
+Memory is structured into:
+
+### Repository Zones
+Logical grouping:
+- api
+- service
+- config
+- tests
+- utils
+- cli
+- models
+
+### Cluster Seeds
+Generated using:
+- graph neighbors
+- test relationships
+- directory similarity
+- role similarity
+
+### Test Mapping
+Automatic detection:
+implementation → tests
+
+### Central Files
+Top ranked nodes with explanations
+
+### Task Route Priors
+Precomputed entry points per task type
+
+---
+
+# Task-Aware Planning (Next Step / USP)
+
+Future extension:
+
+Task → Task Type → Strategy → Plan
+
+Types:
+- bugfix
+- feature
+- refactor
+- test_fix
+- config_change
+
+Each modifies planning behavior.
+
+---
+
+# Install
+
+```
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
+```
 
 ---
 
 # Usage
 
+```
 aicontext init
 aicontext generate
 aicontext inspect
 aicontext inspect-routes
+aicontext plan "update api route"
+```
 
 ---
 
 # Output
 
-.ai/context.yaml  
-.ai/memory.yaml  
+```
+.ai/context.yaml
+.ai/memory.yaml
+```
 
 ---
 
 # Limitations
 
-- Python-first symbol extraction
-- minimal JS/TS analysis
-- heuristic-based detection
-
----
-
-# Development
-
-pytest
-ruff check .
+- Python-first
+- JS/TS limited
+- heuristic-based
+- no semantic analysis
 
 ---
 
 # Related Work
 
-Graph-constrained Reasoning (ICML 2025)  
-https://github.com/RManLuo/graph-constrained-reasoning
+## Graph-Constrained Reasoning
+Luo et al., ICML 2025  
+https://github.com/RManLuo/graph-constrained-reasoning  
 
-## DeepSeek Engram (Conditional Memory)
+## DeepSeek Engram
+Cheng et al., 2026  
+https://arxiv.org/abs/2601.07372  
 
-**Conditional Memory via Scalable Lookup: A New Axis of Sparsity for Large Language Models**  
-Cheng et al., DeepSeek-AI
+### Insight
 
-Paper: https://arxiv.org/abs/2601.07372
+DeepSeek:
+- memory INSIDE model
 
-This work introduces a separation between neural computation and static memory using efficient lookup mechanisms (Engram).
+AI Context Map:
+- memory OUTSIDE model
 
-### Relationship to AI Context Map
+---
 
-DeepSeek integrates memory **inside the model**, enabling constant-time lookup for stored patterns.
+# Mini Literature Review
 
-AI Context Map applies a similar principle **outside the model**:
+| Work | Idea | Difference |
+|-----|-----|-----|
+| RepoMap | summaries | not structural |
+| CodePlan | planning | no memory layer |
+| RepoGraph | graph reasoning | heavier |
+| RIG | full graph | complex infra |
 
-- repository structure is precomputed as memory  
-- task planning operates on this memory layer  
-- expensive reasoning is applied only to relevant regions  
+---
 
-Both approaches share the same core idea:
+# Positioning
 
-> separate memory from reasoning to reduce unnecessary computation
+AI Context Map =
 
-### Key Difference
-
-| DeepSeek Engram | AI Context Map |
-|----------------|---------------|
-| Memory inside LLM | Memory outside LLM |
-| Token-level / pattern memory | Repository-level structural memory |
-| Improves model efficiency | Improves navigation and task execution |
+lightweight + deterministic + inspectable + memory-first
 
 ---
 
 # Summary
 
-AI Context Map provides a deterministic navigation + memory layer for AI coding agents.
+AI Context Map introduces a new abstraction:
+
+> Repository Memory + Task-Aware Planning
 
 ---
 
 ## Authors
 
-- Abraham Bobrovsky
-- Marco Benedetti
+- Abraham Bobrovsky  
+- Marco Benedetti  
 
 ---
 
 ## License
 
-Copyright (c) 2026 Abraham Bobrovsky, Marco Benedetti
-
+Copyright (c) 2026 Abraham Bobrovsky, Marco Benedetti  
 All rights reserved.
