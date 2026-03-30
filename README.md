@@ -184,12 +184,22 @@ Each modifies planning behavior.
 
 ---
 
-# Install
+# Installation
 
+```bash
+uv sync --python 3.11
 ```
-python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
+
+## Development
+
+```bash
+uv sync --python 3.11
+```
+
+## Running Tests
+
+```bash
+uv run pytest
 ```
 
 ---
