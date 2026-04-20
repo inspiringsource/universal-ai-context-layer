@@ -58,6 +58,21 @@ AI Context Map solves this by **externalizing structure and memory before infere
 - Repository scanning with ignore rules
 - Python + basic JS/TS support
 - Dependency graph construction
+- Scan a repository with sensible ignore rules
+- Detect Python and basic JS/TS source files
+- Parse local imports and build a lightweight dependency graph
+- Rank important files using a deterministic scoring system that combines:
+  - repository dependency graph centrality (PageRank)
+  - filename role heuristics (e.g., `main`, `api`, `routes`, `service`)
+  - entrypoint detection signals
+  - lightweight structural signals from the dependency graph
+- Explain file importance with traceable reasons
+- Extract Python symbol anchors from high-value files
+- Identify entry points, core modules, and dependency hotspots
+- Suggest task-specific navigation routes
+- Plan task-oriented investigation using structural ranking, keyword priors, and repository memory
+- Emit `.ai/context.yaml`
+- Initialize `.ai/history.yaml` and `.aicontext.toml`
 
 ### Deterministic Ranking
 - PageRank centrality
@@ -201,8 +216,35 @@ aicontext init
 aicontext generate
 aicontext inspect
 aicontext inspect-routes
-aicontext plan "update api route"
 ```
+
+Plan where to read and edit for a natural-language task:
+
+```
+aicontext plan "fix login bug"
+```
+
+Emit the same plan as JSON:
+
+```
+aicontext plan "fix login bug" --json
+```
+
+Generate context for another path:
+
+```
+aicontext generate /path/to/repo
+```
+
+The planner combines the existing structural ranking with lightweight task keyword priors and repository memory from recent co-change history.
+Impacted-file suggestions are derived from likely edit candidates using structural neighbors and repository memory.
+
+Planner output sections:
+
+- `Read first`: best starting points for investigation
+- `Likely edit candidates`: files most likely to need changes
+- `Likely impacted files`: nearby files likely affected by the change
+- `Likely tests`: tests that look relevant to validate or update
 
 ---
 

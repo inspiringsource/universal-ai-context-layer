@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import yaml
@@ -33,3 +34,90 @@ def test_cli_init_and_generate(tmp_path: Path) -> None:
     assert inspect_routes_result.exit_code == 0
     assert "Task routes:" in inspect_routes_result.stdout
     assert "Top anchors:" in inspect_routes_result.stdout
+
+
+def test_cli_plan_outputs_task_sections(tmp_path: Path) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "api").mkdir()
+    (tmp_path / "src" / "api" / "auth_routes.py").write_text("from src.core.auth_service import login\n", encoding="utf-8")
+    (tmp_path / "src" / "core").mkdir()
+    (tmp_path / "src" / "core" / "auth_service.py").write_text("def login():\n    return True\n", encoding="utf-8")
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_auth.py").write_text("from src.core.auth_service import login\n", encoding="utf-8")
+
+    plan_result = runner.invoke(app, ["plan", "fix failing auth test", str(tmp_path)])
+
+    assert plan_result.exit_code == 0
+    assert "Read first:" in plan_result.stdout
+    assert "Likely edit candidates:" in plan_result.stdout
+    assert "Likely impacted files:" in plan_result.stdout
+    assert "Likely tests:" in plan_result.stdout
+    assert "src/api/auth_routes.py" in plan_result.stdout or "src/core/auth_service.py" in plan_result.stdout
+
+
+def test_cli_plan_json_outputs_machine_readable_sections(tmp_path: Path) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "api").mkdir()
+    (tmp_path / "src" / "api" / "auth_routes.py").write_text("from src.core.auth_service import login\n", encoding="utf-8")
+    (tmp_path / "src" / "core").mkdir()
+    (tmp_path / "src" / "core" / "auth_service.py").write_text("def login():\n    return True\n", encoding="utf-8")
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_auth.py").write_text("from src.core.auth_service import login\n", encoding="utf-8")
+
+    plan_result = runner.invoke(app, ["plan", "fix login bug", str(tmp_path), "--json"])
+
+    assert plan_result.exit_code == 0
+    payload = json.loads(plan_result.stdout)
+    assert list(payload) == ["task", "read_first", "edit_candidates", "impacted_files", "likely_tests"]
+    assert payload["task"] == "fix login bug"
+    assert isinstance(payload["read_first"], list)
+    assert isinstance(payload["edit_candidates"], list)
+    assert isinstance(payload["impacted_files"], list)
+    assert isinstance(payload["likely_tests"], list)
+    if payload["read_first"]:
+        assert list(payload["read_first"][0]) == ["path", "reasons", "score"]
+
+
+def test_cli_plan_json_is_deterministic(tmp_path: Path) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "api").mkdir()
+    (tmp_path / "src" / "api" / "routes.py").write_text("from src.core.service import run\n", encoding="utf-8")
+    (tmp_path / "src" / "core").mkdir()
+    (tmp_path / "src" / "core" / "service.py").write_text("def run():\n    return True\n", encoding="utf-8")
+
+    first = runner.invoke(app, ["plan", "add api endpoint", str(tmp_path), "--json"])
+    second = runner.invoke(app, ["plan", "add api endpoint", str(tmp_path), "--json"])
+
+    assert first.exit_code == 0
+    assert second.exit_code == 0
+    assert first.stdout == second.stdout
+
+
+def test_cli_plan_impacted_files_are_derived_from_edit_candidates(tmp_path: Path) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "api").mkdir()
+    (tmp_path / "src" / "api" / "routes.py").write_text("from src.core.service import run\n", encoding="utf-8")
+    (tmp_path / "src" / "core").mkdir()
+    (tmp_path / "src" / "core" / "service.py").write_text("from src.core.repo import load\n\ndef run():\n    return load()\n", encoding="utf-8")
+    (tmp_path / "src" / "core" / "repo.py").write_text("def load():\n    return True\n", encoding="utf-8")
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests" / "test_service.py").write_text("from src.core.service import run\n", encoding="utf-8")
+
+    plan_result = runner.invoke(app, ["plan", "add api endpoint", str(tmp_path), "--json"])
+
+    assert plan_result.exit_code == 0
+    payload = json.loads(plan_result.stdout)
+    edit_paths = {item["path"] for item in payload["edit_candidates"]}
+    impacted_paths = [item["path"] for item in payload["impacted_files"]]
+
+    assert impacted_paths
+    assert any(path not in edit_paths for path in impacted_paths)
+    assert any(
+        reason in {
+            "depends on selected edit candidate",
+            "neighboring module in dependency graph",
+            "appears to be a related test file",
+        }
+        for item in payload["impacted_files"]
+        for reason in item["reasons"]
+    )
