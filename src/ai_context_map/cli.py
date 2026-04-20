@@ -54,7 +54,7 @@ def inspect(path: Path = typer.Argument(Path("."), exists=True, file_okay=False,
 
 @app.command("inspect-routes")
 def inspect_routes(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True)) -> None:
-    """Print task routes, top anchors, and importance reasons."""
+    """Print the planning-oriented routes derived from the generated context file."""
     document = inspect_context(path)
     typer.echo("Task routes:")
     for category, files in document.get("task_routes", {}).items():

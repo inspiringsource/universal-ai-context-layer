@@ -24,7 +24,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 name = "ai-context-map"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.11"
 
 [project.scripts]
 aicontext = "ai_context_map.cli:app"

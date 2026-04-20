@@ -28,6 +28,9 @@ from ai_context_map.scanner.walker import scan_repository
 def generate_context(root: Path) -> ContextDocument:
     started = perf_counter()
     config = load_config(root)
+
+    # Main pipeline: scan files, build the dependency graph, then derive
+    # ranked navigation data that later task planning can reuse.
     scan_result = scan_repository(root, config)
     nodes, edges = GraphBuilder().build(scan_result)
     ranked = rank_files(nodes, edges, config)

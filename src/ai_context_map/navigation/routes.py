@@ -18,6 +18,8 @@ TASK_CATEGORIES = (
 def build_task_routes(
     nodes: dict[str, FileNode], edges: list[DependencyEdge], ranked_files: list[RankedFile]
 ) -> dict[str, list[TaskRouteFile]]:
+    # Reuse the ranked graph output to produce small, task-specific starting
+    # points instead of forcing callers to search the whole repo again.
     incoming = {path: 0 for path in nodes}
     referenced_by_tests: set[str] = set()
     for edge in edges:
