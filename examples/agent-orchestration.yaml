@@ -1,5 +1,5 @@
-# Optional future direction, not UACL's core promise.
-context_compiler: Universal AI Context Layer
+# Optional future direction, not the context compiler's core promise.
+context_compiler: Universal AI Context Layer (UACL)
 compiled_input: .ai/exports/AGENTS.md
 
 agent_roles:

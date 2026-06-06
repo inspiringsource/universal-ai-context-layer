@@ -58,7 +58,8 @@
     "Never overwrite a root AGENTS.md without an explicit force flag."
   ],
   "known_issues": [
-    "Documentation ingestion is currently lightweight."
+    "Documentation and ADR ingestion is currently lightweight.",
+    "Drift checks are timestamp- and reference-based."
   ],
   "ai_instructions": [
     "Run context checks before publishing compiled outputs."

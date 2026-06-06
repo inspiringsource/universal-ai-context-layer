@@ -15,6 +15,7 @@ UACL is a context compiler that generates and validates AI-consumable project co
 ## Instructions
 
 - Read `.ai/context.yaml` before changing compiler behavior.
+- Run `aicontext check` before publishing compiled outputs.
 - Run tests, Ruff linting, and formatting checks before completing changes.
 
 ## Constraints

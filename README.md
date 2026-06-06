@@ -1,6 +1,8 @@
-# UACL: Context Compiler
+# Universal AI Context Layer (UACL)
 
-UACL is a context compiler for AI-assisted development. It helps generate, validate, and maintain `AGENTS.md` and AI-readable project context from repository sources.
+**Context compiler for AI-assisted development.**
+
+UACL helps generate, validate, and maintain `AGENTS.md` and AI-readable project context from repository sources.
 
 UACL does not replace `AGENTS.md`. It can generate and support `AGENTS.md` while compiling related Markdown and JSON context outputs. Its value is in repeatable compilation, validation, and lightweight drift detection as a repository changes.
 
@@ -185,6 +187,7 @@ Shared agent roles and orchestration are a possible use of compiled context, not
 - [`examples/AGENTS.md`](examples/AGENTS.md): compiled repository instructions
 - [`examples/UACL_CONTEXT.md`](examples/UACL_CONTEXT.md): compiled Markdown context
 - [`examples/uacl-context.json`](examples/uacl-context.json): machine-readable compiled context
+- [`examples/AI_CONTEXT.md`](examples/AI_CONTEXT.md) and [`examples/project-context.json`](examples/project-context.json): compatibility aliases
 - [`examples/agent-orchestration.yaml`](examples/agent-orchestration.yaml): optional future agent workflow
 
 ## Development

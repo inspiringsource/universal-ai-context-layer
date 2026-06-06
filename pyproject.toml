@@ -25,14 +25,12 @@ dynamic = [
 ]
 keywords = [
   "ai",
-  "agents-md",
-  "ai-agents",
-  "ai-context",
-  "context-compiler",
-  "context-engineering",
-  "developer-tools",
   "llm",
-  "uacl",
+  "agents-md",
+  "context-engineering",
+  "context-compiler",
+  "developer-tools",
+  "cli",
 ]
 license = "Apache-2.0"
 license-files = ["LICENSE"]

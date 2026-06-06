@@ -37,7 +37,7 @@ def test_write_portable_exports(tmp_path: Path) -> None:
     data = json.loads(paths[2].read_text(encoding="utf-8"))
     assert "# AGENTS.md: demo" in agents
     assert "## Instructions" in agents
-    assert "# UACL Context: demo" in markdown
+    assert "# Compiled Context: demo" in markdown
     assert "**Reviewer Agent**: Check changes." in markdown
     assert data["decisions"][0]["title"] == "Use YAML"
     assert paths[1].read_text(encoding="utf-8") == paths[3].read_text(encoding="utf-8")
