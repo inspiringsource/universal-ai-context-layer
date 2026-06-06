@@ -19,4 +19,3 @@ class ScanResult:
     root: Path
     files: list[RepositoryFile] = field(default_factory=list)
     languages: set[str] = field(default_factory=set)
-

@@ -9,6 +9,4 @@ from ai_context_map.models.graph import ImportReference
 class Analyzer(Protocol):
     language: str
 
-    def analyze(self, path: Path) -> list[ImportReference]:
-        ...
-
+    def analyze(self, path: Path) -> list[ImportReference]: ...

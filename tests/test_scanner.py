@@ -15,4 +15,3 @@ def test_scanner_ignores_common_dirs(tmp_path: Path) -> None:
     paths = [item.relative_path for item in result.files]
     assert "src/app.py" in paths
     assert "node_modules/x.js" not in paths
-

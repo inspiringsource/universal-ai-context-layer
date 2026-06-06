@@ -74,25 +74,49 @@ See [`examples/agent-orchestration.yaml`](examples/agent-orchestration.yaml).
 
 Requires Python 3.11 or newer.
 
+### Recommended: uv
+
+Install the project and development tools from the committed lockfile:
+
+```bash
+uv sync --extra dev
+```
+
+[`uv`](https://docs.astral.sh/uv/) provides fast dependency resolution and installation. The committed `uv.lock` file keeps development environments reproducible. uv is recommended, but it is not required.
+
+Run the CLI through the managed environment:
+
+```bash
+uv run aicontext --help
+```
+
+### Alternative: venv and pip
+
+Contributors who do not use uv can continue to use a standard virtual environment:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-The installed `aicontext` command is the CLI for Universal AI Context Layer. The command and `ai_context_map` Python package retain their existing names for backward compatibility.
+Both workflows install `aicontext`, the CLI for Universal AI Context Layer. The command and `ai_context_map` Python package retain their existing names for backward compatibility.
 
 ## CLI Workflow
 
 Initialize UACL configuration and provenance files:
 
 ```bash
+uv run aicontext init
+# or, from an activated pip/venv environment:
 aicontext init
 ```
 
 Generate or update the canonical context:
 
 ```bash
+uv run aicontext generate
+# or:
 aicontext generate
 ```
 
@@ -118,32 +142,61 @@ agent_roles:
 Inspect goals, tasks, decisions, important files, and hotspots:
 
 ```bash
+uv run aicontext inspect
+# or:
 aicontext inspect
 ```
 
 Inspect task-focused routes and code anchors:
 
 ```bash
+uv run aicontext inspect-routes
+# or:
 aicontext inspect-routes
 ```
 
 Export portable UACL context:
 
 ```bash
+uv run aicontext export
+# or:
 aicontext export
 ```
 
 Choose a custom export directory:
 
 ```bash
-aicontext export --output-dir ./context-handoff
+uv run aicontext export --output-dir ./context-handoff
 ```
 
 Every command accepts an optional repository path:
 
 ```bash
-aicontext generate ../another-project
+uv run aicontext generate ../another-project
 ```
+
+## Development
+
+With uv:
+
+```bash
+uv sync --extra dev
+uv run pytest -q
+uv run ruff check .
+uv run ruff format --check .
+```
+
+With an activated pip/venv environment, run the same tools directly:
+
+```bash
+pytest -q
+ruff check .
+ruff format --check .
+```
+
+## CI
+
+GitHub Actions runs the test suite, Ruff linting, and formatting checks on every push and pull request.
 
 ## Context Schema
 

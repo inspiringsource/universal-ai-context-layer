@@ -32,9 +32,27 @@ def test_python_symbol_analyzer_extracts_navigation_symbols(tmp_path: Path) -> N
 
     symbols = PythonSymbolAnalyzer().extract(file_path)
 
-    assert any(symbol.name == "app" and symbol.symbol_type == "entrypoint" for symbol in symbols)
-    assert any(symbol.name == "healthcheck" and symbol.symbol_type == "route_handler" for symbol in symbols)
-    assert any(symbol.name == "Detector" and symbol.symbol_type == "class" for symbol in symbols)
-    assert any(symbol.name == "Detector.predict" and symbol.symbol_type == "method" for symbol in symbols)
-    assert any(symbol.name == "helper" and symbol.symbol_type == "function" for symbol in symbols)
-    assert any(symbol.name == "__main__" and symbol.symbol_type == "entrypoint" for symbol in symbols)
+    assert any(
+        symbol.name == "app" and symbol.symbol_type == "entrypoint"
+        for symbol in symbols
+    )
+    assert any(
+        symbol.name == "healthcheck" and symbol.symbol_type == "route_handler"
+        for symbol in symbols
+    )
+    assert any(
+        symbol.name == "Detector" and symbol.symbol_type == "class"
+        for symbol in symbols
+    )
+    assert any(
+        symbol.name == "Detector.predict" and symbol.symbol_type == "method"
+        for symbol in symbols
+    )
+    assert any(
+        symbol.name == "helper" and symbol.symbol_type == "function"
+        for symbol in symbols
+    )
+    assert any(
+        symbol.name == "__main__" and symbol.symbol_type == "entrypoint"
+        for symbol in symbols
+    )

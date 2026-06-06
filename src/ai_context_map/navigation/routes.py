@@ -4,7 +4,6 @@ from ai_context_map.graph.ranking import RankedFile
 from ai_context_map.models.context import TaskRouteFile
 from ai_context_map.models.graph import DependencyEdge, FileNode
 
-
 TASK_CATEGORIES = (
     "bugfix",
     "feature_work",
@@ -16,11 +15,13 @@ TASK_CATEGORIES = (
 
 
 def build_task_routes(
-    nodes: dict[str, FileNode], edges: list[DependencyEdge], ranked_files: list[RankedFile]
+    nodes: dict[str, FileNode],
+    edges: list[DependencyEdge],
+    ranked_files: list[RankedFile],
 ) -> dict[str, list[TaskRouteFile]]:
     # Reuse the ranked graph output to produce small, task-specific starting
     # points instead of forcing callers to search the whole repo again.
-    incoming = {path: 0 for path in nodes}
+    incoming = dict.fromkeys(nodes, 0)
     referenced_by_tests: set[str] = set()
     for edge in edges:
         incoming[edge.target] = incoming.get(edge.target, 0) + 1
@@ -32,8 +33,12 @@ def build_task_routes(
         scored: list[tuple[float, str, list[str]]] = []
         for item in ranked_files:
             node = nodes[item.path]
-            score, reasons = _score_for_task(category, item, node, incoming.get(item.path, 0), referenced_by_tests)
-            if score <= 0 or (not reasons and category not in {"bugfix", "feature_work"}):
+            score, reasons = _score_for_task(
+                category, item, node, incoming.get(item.path, 0), referenced_by_tests
+            )
+            if score <= 0 or (
+                not reasons and category not in {"bugfix", "feature_work"}
+            ):
                 continue
             scored.append((score, item.path, reasons))
         if not scored and category in {"bugfix", "feature_work"}:
@@ -42,7 +47,10 @@ def build_task_routes(
                 if fallback_reasons:
                     scored.append((item.score * 0.1, item.path, fallback_reasons))
         scored.sort(key=lambda value: (-value[0], value[1]))
-        routes[category] = [TaskRouteFile(path=path, reasons=reasons[:3]) for _score, path, reasons in scored[:5]]
+        routes[category] = [
+            TaskRouteFile(path=path, reasons=reasons[:3])
+            for _score, path, reasons in scored[:5]
+        ]
     return routes
 
 
@@ -90,11 +98,16 @@ def _score_for_task(
         if node.role == "business_logic":
             score += 4.0
             reasons.append("located in core/service module")
-        if any(pattern in path for pattern in ("detector", "algorithm", "/core/", "service")):
+        if any(
+            pattern in path
+            for pattern in ("detector", "algorithm", "/core/", "service")
+        ):
             score += 2.0
             reasons.append("core detector logic")
     elif category == "config_change":
-        if node.role == "config" or any(pattern in path for pattern in ("config", "settings", ".env", "toml")):
+        if node.role == "config" or any(
+            pattern in path for pattern in ("config", "settings", ".env", "toml")
+        ):
             score += 5.0
             reasons.append("configuration entrypoint")
     elif category == "test_work":
@@ -123,7 +136,8 @@ def _fallback_reasons(category: str, item: RankedFile) -> list[str]:
     if "central in dependency graph" in item.reasons:
         reasons.append("central in dependency graph")
     if category == "feature_work" and any(
-        reason in item.reasons for reason in ("located in core/service module", "filename suggests entrypoint")
+        reason in item.reasons
+        for reason in ("located in core/service module", "filename suggests entrypoint")
     ):
         reasons.append("supports new feature wiring")
     return reasons

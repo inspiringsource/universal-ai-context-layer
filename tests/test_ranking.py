@@ -5,9 +5,15 @@ from ai_context_map.models.graph import DependencyEdge, FileNode
 
 def test_ranking_prefers_central_service_module() -> None:
     nodes = {
-        "src/main.py": FileNode(path="src/main.py", language="python", role="entrypoint"),
-        "src/app/service.py": FileNode(path="src/app/service.py", language="python", role="business_logic"),
-        "src/utils.py": FileNode(path="src/utils.py", language="python", role="utility"),
+        "src/main.py": FileNode(
+            path="src/main.py", language="python", role="entrypoint"
+        ),
+        "src/app/service.py": FileNode(
+            path="src/app/service.py", language="python", role="business_logic"
+        ),
+        "src/utils.py": FileNode(
+            path="src/utils.py", language="python", role="utility"
+        ),
     }
     edges = [
         DependencyEdge(source="src/main.py", target="src/app/service.py"),

@@ -128,15 +128,22 @@ def _looks_like_app_initialization(node: ast.AST) -> bool:
     return func_name.endswith(("fastapi", "flask", "application", "app"))
 
 
-def _route_reason(node: ast.FunctionDef | ast.AsyncFunctionDef, app_names: set[str]) -> str | None:
+def _route_reason(
+    node: ast.FunctionDef | ast.AsyncFunctionDef, app_names: set[str]
+) -> str | None:
     for decorator in node.decorator_list:
         name = _decorator_name(decorator)
         if not name:
             continue
         lowered = name.lower()
-        if any(lowered.endswith(f".{method}") for method in ("get", "post", "put", "delete", "patch", "options")):
+        if any(
+            lowered.endswith(f".{method}")
+            for method in ("get", "post", "put", "delete", "patch", "options")
+        ):
             return "contains route handlers"
-        if app_names and any(lowered.startswith(f"{app_name.lower()}.") for app_name in app_names):
+        if app_names and any(
+            lowered.startswith(f"{app_name.lower()}.") for app_name in app_names
+        ):
             return "contains route handlers"
         if ".route" in lowered or lowered.endswith(".api_route"):
             return "contains route handlers"

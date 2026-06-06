@@ -26,4 +26,3 @@ class PythonAnalyzer:
                     )
                 )
         return refs
-

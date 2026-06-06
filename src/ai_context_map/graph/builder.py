@@ -5,10 +5,9 @@ from pathlib import Path
 
 from ai_context_map.analyzers.js_ts_analyzer import JsTsAnalyzer
 from ai_context_map.analyzers.python_analyzer import PythonAnalyzer
+from ai_context_map.graph.roles import classify_role
 from ai_context_map.models.graph import DependencyEdge, FileNode, ImportReference
 from ai_context_map.models.repo import RepositoryFile, ScanResult
-from ai_context_map.graph.roles import classify_role
-
 
 SOURCE_ROOT_HINTS = {"src", "app", "lib"}
 JS_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"]
@@ -19,8 +18,12 @@ class GraphBuilder:
         self.python_analyzer = PythonAnalyzer()
         self.js_analyzer = JsTsAnalyzer()
 
-    def build(self, scan_result: ScanResult) -> tuple[dict[str, FileNode], list[DependencyEdge]]:
-        source_files = [item for item in scan_result.files if item.is_source and item.language]
+    def build(
+        self, scan_result: ScanResult
+    ) -> tuple[dict[str, FileNode], list[DependencyEdge]]:
+        source_files = [
+            item for item in scan_result.files if item.is_source and item.language
+        ]
         nodes = {
             item.relative_path: FileNode(
                 path=item.relative_path,
@@ -42,7 +45,10 @@ class GraphBuilder:
                 if target != item.relative_path:
                     edges.add((item.relative_path, target))
 
-        edge_list = [DependencyEdge(source=source, target=target) for source, target in sorted(edges)]
+        edge_list = [
+            DependencyEdge(source=source, target=target)
+            for source, target in sorted(edges)
+        ]
         return nodes, edge_list
 
     def _analyze(self, item: RepositoryFile) -> list[ImportReference]:
@@ -87,7 +93,9 @@ class GraphBuilder:
             if Path(item.relative_path).stem != "__init__" and current_package_parts:
                 current_package_parts = current_package_parts[:-1]
             for ref in imports:
-                for module_name in self._expand_python_reference(ref, current_package_parts):
+                for module_name in self._expand_python_reference(
+                    ref, current_package_parts
+                ):
                     if module_name in python_modules:
                         resolved.add(python_modules[module_name])
         elif item.language in {"javascript", "typescript"}:
@@ -105,7 +113,11 @@ class GraphBuilder:
     ) -> list[str]:
         if ref.level:
             ascend = max(ref.level - 1, 0)
-            base_parts = current_package_parts[: len(current_package_parts) - ascend] if ascend else current_package_parts
+            base_parts = (
+                current_package_parts[: len(current_package_parts) - ascend]
+                if ascend
+                else current_package_parts
+            )
             module_parts = ref.module.split(".") if ref.module else []
             base_module = ".".join([*base_parts, *module_parts]).strip(".")
             candidates = [base_module] if base_module else []
@@ -127,7 +139,9 @@ class GraphBuilder:
         target_base = (base_dir / module).as_posix()
         candidates = [target_base]
         candidates.extend(target_base + ext for ext in JS_EXTENSIONS)
-        candidates.extend((Path(target_base) / f"index{ext}").as_posix() for ext in JS_EXTENSIONS)
+        candidates.extend(
+            (Path(target_base) / f"index{ext}").as_posix() for ext in JS_EXTENSIONS
+        )
         for candidate in candidates:
             if candidate in nodes:
                 return candidate
@@ -141,4 +155,3 @@ def graph_metrics(edges: list[DependencyEdge]) -> dict[str, dict[str, int]]:
         outgoing[edge.source] += 1
         incoming[edge.target] += 1
     return {"incoming": dict(incoming), "outgoing": dict(outgoing)}
-

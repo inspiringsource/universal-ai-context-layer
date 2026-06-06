@@ -21,4 +21,3 @@ def run_init(root: Path) -> list[str]:
         write_history_stub(history_path)
         created.append(".ai/history.yaml")
     return created
-

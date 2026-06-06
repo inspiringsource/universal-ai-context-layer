@@ -11,7 +11,9 @@ from ai_context_map.models.context import ContextDocument
 
 def write_context_yaml(document: ContextDocument, output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(yaml.safe_dump(_to_data(document), sort_keys=False), encoding="utf-8")
+    output_path.write_text(
+        yaml.safe_dump(_to_data(document), sort_keys=False), encoding="utf-8"
+    )
 
 
 def write_history_stub(path: Path) -> None:
@@ -28,4 +30,3 @@ def _to_data(value: Any) -> Any:
     if isinstance(value, dict):
         return {key: _to_data(item) for key, item in value.items()}
     return value
-

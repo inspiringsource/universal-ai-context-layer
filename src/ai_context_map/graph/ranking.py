@@ -43,8 +43,8 @@ ENTRYPOINT_WEIGHT = 0.20
 def rank_files(
     nodes: dict[str, FileNode], edges: list[DependencyEdge], config: Config
 ) -> list[RankedFile]:
-    incoming = {path: 0 for path in nodes}
-    outgoing = {path: 0 for path in nodes}
+    incoming = dict.fromkeys(nodes, 0)
+    outgoing = dict.fromkeys(nodes, 0)
     imported_by_api: set[str] = set()
     for edge in edges:
         incoming[edge.target] = incoming.get(edge.target, 0) + 1
@@ -72,11 +72,21 @@ def rank_files(
         out_degree = outgoing.get(path, 0)
         if in_degree:
             score += in_degree * 2.0
-            reasons.append("high incoming dependency count" if in_degree > 1 else "has incoming dependencies")
+            reasons.append(
+                "high incoming dependency count"
+                if in_degree > 1
+                else "has incoming dependencies"
+            )
         if out_degree:
             score += out_degree * 0.75
-            reasons.append("high outgoing dependency count" if out_degree > 2 else "has outgoing dependencies")
-        centrality = round((in_degree * CENTRALITY_IN_WEIGHT) + (out_degree * CENTRALITY_OUT_WEIGHT), 2)
+            reasons.append(
+                "high outgoing dependency count"
+                if out_degree > 2
+                else "has outgoing dependencies"
+            )
+        centrality = round(
+            (in_degree * CENTRALITY_IN_WEIGHT) + (out_degree * CENTRALITY_OUT_WEIGHT), 2
+        )
         if centrality >= 3.0:
             score += centrality
             reasons.append("central in dependency graph")
@@ -112,7 +122,7 @@ def rank_files(
     score_scale = max(max(heuristic_scores.values(), default=0.0), 1.0)
 
     ranked: list[RankedFile] = []
-    for path, node in nodes.items():
+    for path in nodes:
         reasons, in_degree, out_degree, centrality = file_details[path]
         pagerank_score = pagerank_scores.get(path, 0.0)
         heuristic_score = heuristic_scores.get(path, 0.0)
@@ -122,7 +132,7 @@ def rank_files(
             + (entrypoint_signals.get(path, 0.0) * ENTRYPOINT_WEIGHT)
         ) * score_scale
         if pagerank_score > 0.0 and "central in dependency graph" not in reasons:
-            reasons = reasons + ["high PageRank in dependency graph"]
+            reasons = [*reasons, "high PageRank in dependency graph"]
         ranked.append(
             RankedFile(
                 path=path,
@@ -136,7 +146,14 @@ def rank_files(
             )
         )
 
-    ranked.sort(key=lambda item: (-item.score, -item.pagerank_score, -item.heuristic_score, item.path))
+    ranked.sort(
+        key=lambda item: (
+            -item.score,
+            -item.pagerank_score,
+            -item.heuristic_score,
+            item.path,
+        )
+    )
     return ranked
 
 
@@ -174,7 +191,7 @@ def _compute_pagerank(
         outgoing[edge.source].add(edge.target)
         incoming[edge.target].append(edge.source)
 
-    scores = {path: base_score for path in paths}
+    scores = dict.fromkeys(paths, base_score)
     teleport = (1.0 - damping) / count
 
     for _ in range(max_iterations):
@@ -182,7 +199,9 @@ def _compute_pagerank(
         next_scores: dict[str, float] = {}
         max_delta = 0.0
         for path in paths:
-            inbound_total = sum(scores[source] / len(outgoing[source]) for source in incoming[path])
+            inbound_total = sum(
+                scores[source] / len(outgoing[source]) for source in incoming[path]
+            )
             score = teleport + (damping * ((sink_total / count) + inbound_total))
             next_scores[path] = score
             max_delta = max(max_delta, abs(score - scores[path]))
@@ -192,7 +211,7 @@ def _compute_pagerank(
 
     total = sum(scores.values())
     if isclose(total, 0.0):
-        return {path: 0.0 for path in paths}
+        return dict.fromkeys(paths, 0.0)
     return {path: scores[path] / total for path in paths}
 
 
@@ -202,6 +221,6 @@ def _normalize_scores(scores: dict[str, float]) -> dict[str, float]:
     minimum = min(scores.values())
     maximum = max(scores.values())
     if isclose(maximum, minimum):
-        return {path: 0.0 for path in scores}
+        return dict.fromkeys(scores, 0.0)
     scale = maximum - minimum
     return {path: (value - minimum) / scale for path, value in scores.items()}

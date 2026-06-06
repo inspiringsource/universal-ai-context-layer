@@ -7,13 +7,14 @@ from ai_context_map.graph.ranking import RankedFile
 from ai_context_map.models.context import Anchor
 from ai_context_map.models.graph import FileNode
 
-
 MAX_ANCHORS = 12
 MAX_SYMBOLS_PER_FILE = 3
 IMPORTANT_ROLES = {"entrypoint", "api", "business_logic", "data_model", "storage"}
 
 
-def build_anchors(root: Path, nodes: dict[str, FileNode], ranked_files: list[RankedFile]) -> list[Anchor]:
+def build_anchors(
+    root: Path, nodes: dict[str, FileNode], ranked_files: list[RankedFile]
+) -> list[Anchor]:
     analyzer = PythonSymbolAnalyzer()
     anchors: list[Anchor] = []
     for item in ranked_files:
@@ -62,5 +63,11 @@ def _select_symbols(symbols: list, item: RankedFile) -> list:
         if symbol.symbol_type == "function" and item.score < 7.0:
             continue
         selected.append(symbol)
-    selected.sort(key=lambda symbol: (priority.get(symbol.symbol_type, 99), symbol.line or 0, symbol.name))
+    selected.sort(
+        key=lambda symbol: (
+            priority.get(symbol.symbol_type, 99),
+            symbol.line or 0,
+            symbol.name,
+        )
+    )
     return selected[:MAX_SYMBOLS_PER_FILE]

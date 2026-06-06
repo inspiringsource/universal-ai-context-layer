@@ -24,4 +24,3 @@ class FileNode:
 class DependencyEdge:
     source: str
     target: str
-

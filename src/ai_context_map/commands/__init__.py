@@ -1,2 +1,1 @@
 """CLI command entry points."""
-

@@ -11,7 +11,11 @@ from ai_context_map.scanner.ignore import IgnoreRules
 def scan_repository(root: Path, config: Config) -> ScanResult:
     root = root.resolve()
     ignore_rules = IgnoreRules(exclude_paths=config.exclude_paths)
-    include_paths = [root / path for path in config.include_paths] if config.include_paths else [root]
+    include_paths = (
+        [root / path for path in config.include_paths]
+        if config.include_paths
+        else [root]
+    )
     seen: set[Path] = set()
     result = ScanResult(root=root)
 
@@ -47,4 +51,3 @@ def scan_repository(root: Path, config: Config) -> ScanResult:
                 result.languages.add(language)
     result.files.sort(key=lambda item: item.relative_path)
     return result
-

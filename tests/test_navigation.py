@@ -24,11 +24,17 @@ def test_anchor_generation_uses_top_ranked_python_files(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     nodes = {
-        "src/api/routes.py": FileNode(path="src/api/routes.py", language="python", role="api"),
-        "tests/test_routes.py": FileNode(path="tests/test_routes.py", language="python", role="test"),
+        "src/api/routes.py": FileNode(
+            path="src/api/routes.py", language="python", role="api"
+        ),
+        "tests/test_routes.py": FileNode(
+            path="tests/test_routes.py", language="python", role="test"
+        ),
     }
     ranked = [
-        RankedFile(path="src/api/routes.py", score=10.0, reasons=["contains route handlers"]),
+        RankedFile(
+            path="src/api/routes.py", score=10.0, reasons=["contains route handlers"]
+        ),
         RankedFile(path="tests/test_routes.py", score=9.0, reasons=["test file"]),
     ]
 
@@ -42,10 +48,18 @@ def test_anchor_generation_uses_top_ranked_python_files(tmp_path: Path) -> None:
 
 def test_task_routes_prioritize_api_logic_and_tests() -> None:
     nodes = {
-        "src/main.py": FileNode(path="src/main.py", language="python", role="entrypoint"),
-        "src/api/routes.py": FileNode(path="src/api/routes.py", language="python", role="api"),
-        "src/core/service.py": FileNode(path="src/core/service.py", language="python", role="business_logic"),
-        "tests/test_service.py": FileNode(path="tests/test_service.py", language="python", role="test"),
+        "src/main.py": FileNode(
+            path="src/main.py", language="python", role="entrypoint"
+        ),
+        "src/api/routes.py": FileNode(
+            path="src/api/routes.py", language="python", role="api"
+        ),
+        "src/core/service.py": FileNode(
+            path="src/core/service.py", language="python", role="business_logic"
+        ),
+        "tests/test_service.py": FileNode(
+            path="tests/test_service.py", language="python", role="test"
+        ),
     }
     edges = [
         DependencyEdge(source="src/main.py", target="src/api/routes.py"),
@@ -53,9 +67,17 @@ def test_task_routes_prioritize_api_logic_and_tests() -> None:
         DependencyEdge(source="tests/test_service.py", target="src/core/service.py"),
     ]
     ranked = [
-        RankedFile(path="src/core/service.py", score=11.0, reasons=["located in core/service module"]),
-        RankedFile(path="src/api/routes.py", score=10.0, reasons=["contains route handlers"]),
-        RankedFile(path="src/main.py", score=8.0, reasons=["filename suggests entrypoint"]),
+        RankedFile(
+            path="src/core/service.py",
+            score=11.0,
+            reasons=["located in core/service module"],
+        ),
+        RankedFile(
+            path="src/api/routes.py", score=10.0, reasons=["contains route handlers"]
+        ),
+        RankedFile(
+            path="src/main.py", score=8.0, reasons=["filename suggests entrypoint"]
+        ),
         RankedFile(path="tests/test_service.py", score=5.0, reasons=["test file"]),
     ]
 
@@ -69,9 +91,15 @@ def test_task_routes_prioritize_api_logic_and_tests() -> None:
 
 def test_ranking_adds_graph_reasons_and_deprioritizes_tests() -> None:
     nodes = {
-        "src/api/routes.py": FileNode(path="src/api/routes.py", language="python", role="api"),
-        "src/core/service.py": FileNode(path="src/core/service.py", language="python", role="business_logic"),
-        "tests/test_service.py": FileNode(path="tests/test_service.py", language="python", role="test"),
+        "src/api/routes.py": FileNode(
+            path="src/api/routes.py", language="python", role="api"
+        ),
+        "src/core/service.py": FileNode(
+            path="src/core/service.py", language="python", role="business_logic"
+        ),
+        "tests/test_service.py": FileNode(
+            path="tests/test_service.py", language="python", role="test"
+        ),
     }
     edges = [
         DependencyEdge(source="src/api/routes.py", target="src/core/service.py"),

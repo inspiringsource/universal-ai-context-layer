@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 ROLE_PATTERNS: list[tuple[str, tuple[str, ...]]] = [
     ("entrypoint", ("main", "cli", "server", "manage", "__main__")),
     ("api", ("api", "route", "router", "endpoint")),
@@ -36,4 +35,3 @@ def classify_directory_role(relative_path: str) -> str:
     if "config" in lowered:
         return "config"
     return "directory"
-

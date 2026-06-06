@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
-import tomllib
-
 
 DEFAULT_CONFIG_TEXT = """include_paths = []
 exclude_paths = []
@@ -61,8 +60,8 @@ def load_config(root: Path) -> Config:
         include_paths=list(data.get("include_paths", [])),
         exclude_paths=list(data.get("exclude_paths", [])),
         languages=list(data.get("languages", ["python", "javascript", "typescript"])),
-        filename_weights=dict(data.get("filename_weights", {})) or Config().filename_weights,
+        filename_weights=dict(data.get("filename_weights", {}))
+        or Config().filename_weights,
         enable_git_metadata=bool(data.get("enable_git_metadata", False)),
         output_path=str(data.get("output_path", ".ai/context.yaml")),
     )
-
