@@ -6,11 +6,11 @@
     "detected_languages": [
       "python"
     ],
-    "summary": "A vendor-neutral context layer that preserves project knowledge across AI models, tools, and agents."
+    "summary": "A context compiler that generates and validates AI-consumable project context."
   },
   "project_goals": [
-    "Keep architecture decisions available across Claude, ChatGPT, Cursor, Codex, and Gemini.",
-    "Give specialized agents one shared source of truth."
+    "Keep AGENTS.md and related context outputs aligned with repository changes.",
+    "Preserve human-authored decisions when generated analysis is refreshed."
   ],
   "tech_stack": [
     "Python 3.11",
@@ -46,22 +46,22 @@
     ]
   },
   "current_tasks": [
-    "Validate UACL context handoffs with multiple AI tools."
+    "Improve context-source ingestion and drift validation."
   ],
   "decisions": [
     {
-      "title": "Canonical YAML context",
-      "rationale": "YAML is readable, editable, and version-control friendly."
+      "title": "Support AGENTS.md",
+      "rationale": "Compile an established repository instruction format instead of replacing it."
     }
   ],
   "constraints": [
-    "Do not send repository content to remote services automatically."
+    "Never overwrite a root AGENTS.md without an explicit force flag."
   ],
   "known_issues": [
-    "Concurrent agent updates are not automatically merged."
+    "Documentation ingestion is currently lightweight."
   ],
   "ai_instructions": [
-    "Read the complete UACL context before proposing changes."
+    "Run context checks before publishing compiled outputs."
   ],
   "agent_roles": [
     {
@@ -84,5 +84,19 @@
     "enabled": false,
     "history_file": ".ai/history.yaml"
   },
+  "context_sources": [
+    "source_code",
+    "README.md",
+    "AGENTS.md",
+    ".ai/context.yaml"
+  ],
+  "generated_outputs": [
+    ".ai/exports/AGENTS.md",
+    ".ai/exports/UACL_CONTEXT.md",
+    ".ai/exports/uacl-context.json"
+  ],
+  "last_generated_at": "2026-06-06T09:00:00+00:00",
+  "drift_warnings": [],
+  "validation_warnings": [],
   "metrics": {}
 }

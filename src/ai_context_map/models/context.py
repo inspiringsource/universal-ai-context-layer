@@ -99,4 +99,9 @@ class ContextDocument:
     decisions: list[dict[str, Any]] = field(default_factory=list)
     ai_instructions: list[str] = field(default_factory=list)
     agent_roles: list[dict[str, Any]] = field(default_factory=list)
+    context_sources: list[str] = field(default_factory=list)
+    generated_outputs: list[str] = field(default_factory=list)
+    last_generated_at: str | None = None
+    drift_warnings: list[str] = field(default_factory=list)
+    validation_warnings: list[str] = field(default_factory=list)
     metrics: dict[str, Any] = field(default_factory=dict)

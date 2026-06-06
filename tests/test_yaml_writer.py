@@ -51,3 +51,6 @@ def test_write_context_yaml(tmp_path: Path) -> None:
     assert (
         data["task_routes"]["model_or_logic_change"][0]["path"] == "src/app/service.py"
     )
+    assert data["context_sources"] == []
+    assert data["generated_outputs"] == []
+    assert data["drift_warnings"] == []

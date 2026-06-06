@@ -16,6 +16,11 @@ def write_context_yaml(document: ContextDocument, output_path: Path) -> None:
     )
 
 
+def write_context_data(data: dict[str, Any], output_path: Path) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
+
+
 def write_history_stub(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.exists():

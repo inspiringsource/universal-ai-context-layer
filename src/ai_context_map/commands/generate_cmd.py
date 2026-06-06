@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from datetime import UTC, datetime
 from pathlib import Path
 from time import perf_counter
 from typing import Any
@@ -115,7 +116,7 @@ def generate_context(root: Path) -> ContextDocument:
             name=root.resolve().name,
             root=".",
             detected_languages=detected_languages,
-            summary=existing_context.get("project", {}).get("summary"),
+            summary=_project_summary(root, existing_context),
         ),
         architecture=architecture,
         navigation_map=NavigationMap(directories=directories, key_files=key_files),
@@ -131,6 +132,11 @@ def generate_context(root: Path) -> ContextDocument:
         decisions=list(existing_context.get("decisions", [])),
         ai_instructions=list(existing_context.get("ai_instructions", [])),
         agent_roles=list(existing_context.get("agent_roles", [])),
+        context_sources=_context_sources(root),
+        generated_outputs=list(existing_context.get("generated_outputs", [])),
+        last_generated_at=datetime.now(UTC).isoformat(),
+        drift_warnings=[],
+        validation_warnings=[],
         metrics={
             "files_scanned": len(scan_result.files),
             "source_files_analyzed": len(nodes),
@@ -167,3 +173,39 @@ def _infer_layers(nodes: dict[str, object]) -> list[dict[str, str]]:
                 {"name": directory, "role": classify_directory_role(directory)}
             )
     return layers
+
+
+def _context_sources(root: Path) -> list[str]:
+    sources = ["source_code"]
+    for candidate in ("README.md", "AGENTS.md"):
+        if (root / candidate).exists():
+            sources.append(candidate)
+    for directory in ("docs", "adr", "adrs"):
+        path = root / directory
+        if path.is_dir():
+            sources.extend(
+                str(item.relative_to(root))
+                for item in sorted(path.rglob("*.md"))
+                if item.is_file()
+            )
+    sources.append(".ai/context.yaml")
+    return sources
+
+
+def _project_summary(root: Path, existing_context: dict[str, Any]) -> str | None:
+    existing_summary = existing_context.get("project", {}).get("summary")
+    if existing_summary:
+        return str(existing_summary)
+
+    readme = root / "README.md"
+    if not readme.exists():
+        return None
+    paragraph = []
+    for line in readme.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if paragraph and not stripped:
+            break
+        if not stripped or stripped.startswith(("#", "```", "![", "[!", "-", "|")):
+            continue
+        paragraph.append(stripped)
+    return " ".join(paragraph) or None

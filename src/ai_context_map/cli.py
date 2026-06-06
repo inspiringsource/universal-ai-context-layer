@@ -5,12 +5,15 @@ from typing import Annotated
 
 import typer
 
+from ai_context_map.commands.check_cmd import check_context
 from ai_context_map.commands.export_cmd import export_context
 from ai_context_map.commands.generate_cmd import generate_context
 from ai_context_map.commands.init_cmd import run_init
 from ai_context_map.commands.inspect_cmd import inspect_context
 
-app = typer.Typer(help="aicontext: CLI for Universal AI Context Layer (UACL).")
+app = typer.Typer(
+    help="aicontext: context compiler and maintenance CLI for AI-assisted development."
+)
 
 
 @app.command()
@@ -61,12 +64,44 @@ def export(
             help="Directory for preferred UACL exports and compatibility aliases.",
         ),
     ] = None,
+    write_agents_md: Annotated[
+        bool,
+        typer.Option(
+            "--write-agents-md",
+            help="Also write AGENTS.md at the repository root.",
+        ),
+    ] = False,
+    force: Annotated[
+        bool,
+        typer.Option(
+            "--force",
+            help="Allow --write-agents-md to replace an existing root AGENTS.md.",
+        ),
+    ] = False,
 ) -> None:
-    """Export portable UACL Markdown and JSON files, plus compatibility aliases."""
-    written = export_context(path, output_dir)
+    """Compile AGENTS.md, Markdown, and JSON context outputs."""
+    written, warnings = export_context(path, output_dir, write_agents_md, force)
     typer.echo("Exported:")
     for item in written:
         typer.echo(f"  - {item}")
+    for warning in warnings:
+        typer.echo(f"Warning: {warning}", err=True)
+
+
+@app.command()
+def check(
+    path: Annotated[
+        Path, typer.Argument(exists=True, file_okay=False, resolve_path=True)
+    ] = Path(),
+) -> None:
+    """Check the canonical context and compiled outputs for drift."""
+    warnings = check_context(path)
+    if not warnings:
+        typer.echo("Context check passed: no drift warnings.")
+        return
+    typer.echo(f"Context check found {len(warnings)} warning(s):")
+    for warning in warnings:
+        typer.echo(f"  - {warning}")
 
 
 @app.command()

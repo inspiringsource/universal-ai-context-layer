@@ -26,15 +26,19 @@ def test_write_portable_exports(tmp_path: Path) -> None:
     paths = write_portable_exports(context, tmp_path)
 
     assert paths == [
+        tmp_path / "AGENTS.md",
         tmp_path / "UACL_CONTEXT.md",
         tmp_path / "uacl-context.json",
         tmp_path / "AI_CONTEXT.md",
         tmp_path / "project-context.json",
     ]
-    markdown = paths[0].read_text(encoding="utf-8")
-    data = json.loads(paths[1].read_text(encoding="utf-8"))
+    agents = paths[0].read_text(encoding="utf-8")
+    markdown = paths[1].read_text(encoding="utf-8")
+    data = json.loads(paths[2].read_text(encoding="utf-8"))
+    assert "# AGENTS.md: demo" in agents
+    assert "## Instructions" in agents
     assert "# UACL Context: demo" in markdown
     assert "**Reviewer Agent**: Check changes." in markdown
     assert data["decisions"][0]["title"] == "Use YAML"
-    assert paths[0].read_text(encoding="utf-8") == paths[2].read_text(encoding="utf-8")
     assert paths[1].read_text(encoding="utf-8") == paths[3].read_text(encoding="utf-8")
+    assert paths[2].read_text(encoding="utf-8") == paths[4].read_text(encoding="utf-8")
