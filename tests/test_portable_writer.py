@@ -7,8 +7,8 @@ from ai_context_map.emitter.portable_writer import write_portable_exports
 def test_write_portable_exports(tmp_path: Path) -> None:
     context = {
         "uacl_version": 2,
-        "project": {"name": "demo", "summary": "Portable context demo."},
-        "project_goals": ["Keep decisions available across models."],
+        "project": {"name": "demo", "summary": "Compiled context demo."},
+        "project_goals": ["Keep generated context aligned with repository sources."],
         "tech_stack": ["Python"],
         "architecture": {"layers": [], "entry_points": []},
         "navigation_map": {"key_files": []},

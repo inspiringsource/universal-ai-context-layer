@@ -21,7 +21,7 @@ A context compiler that generates and validates AI-consumable project context.
 
 - `src/ai_context_map/cli.py`: backward-compatible UACL command-line entry point
 - `src/ai_context_map/commands/`: workflow orchestration
-- `src/ai_context_map/emitter/`: canonical and portable context outputs
+- `src/ai_context_map/emitter/`: canonical and compiled context outputs
 
 ## Current Tasks
 

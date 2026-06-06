@@ -54,8 +54,8 @@ def test_cli_init_and_generate(tmp_path: Path) -> None:
     assert context["last_generated_at"]
     assert context["generated_outputs"] == []
 
-    context["project_goals"] = ["Preserve context across AI tools."]
-    context["current_tasks"] = ["Add portable exports."]
+    context["project_goals"] = ["Preserve human-authored context during refresh."]
+    context["current_tasks"] = ["Add compiled exports."]
     context["decisions"] = [
         {"title": "Canonical YAML", "rationale": "Easy to edit and diff."}
     ]
@@ -72,13 +72,15 @@ def test_cli_init_and_generate(tmp_path: Path) -> None:
     updated = yaml.safe_load(
         (tmp_path / ".ai" / "context.yaml").read_text(encoding="utf-8")
     )
-    assert updated["project_goals"] == ["Preserve context across AI tools."]
+    assert updated["project_goals"] == [
+        "Preserve human-authored context during refresh."
+    ]
 
     inspect_result = runner.invoke(app, ["inspect", str(tmp_path)])
     assert inspect_result.exit_code == 0
     assert "Project goals:" in inspect_result.stdout
-    assert "Preserve context across AI tools." in inspect_result.stdout
-    assert "Add portable exports." in inspect_result.stdout
+    assert "Preserve human-authored context during refresh." in inspect_result.stdout
+    assert "Add compiled exports." in inspect_result.stdout
 
     inspect_routes_result = runner.invoke(app, ["inspect-routes", str(tmp_path)])
     assert inspect_routes_result.exit_code == 0
@@ -97,18 +99,20 @@ def test_cli_init_and_generate(tmp_path: Path) -> None:
     )
     assert "## Agent Roles" in markdown
     assert "Coding Agent" in markdown
-    assert exported_json["project_goals"] == ["Preserve context across AI tools."]
+    assert exported_json["project_goals"] == [
+        "Preserve human-authored context during refresh."
+    ]
     assert (tmp_path / ".ai" / "exports" / "AGENTS.md").exists()
     assert (tmp_path / ".ai" / "exports" / "UACL_CONTEXT.md").exists()
     assert (tmp_path / ".ai" / "exports" / "uacl-context.json").exists()
 
     custom_export_result = runner.invoke(
         app,
-        ["export", str(tmp_path), "--output-dir", str(tmp_path / "context-handoff")],
+        ["export", str(tmp_path), "--output-dir", str(tmp_path / "compiled-context")],
     )
     assert custom_export_result.exit_code == 0
-    assert (tmp_path / "context-handoff" / "AI_CONTEXT.md").exists()
-    assert (tmp_path / "context-handoff" / "UACL_CONTEXT.md").exists()
+    assert (tmp_path / "compiled-context" / "AI_CONTEXT.md").exists()
+    assert (tmp_path / "compiled-context" / "UACL_CONTEXT.md").exists()
 
 
 def test_root_agents_md_requires_explicit_force(tmp_path: Path) -> None:

@@ -1,16 +1,18 @@
-# Universal AI Context Layer
+# UACL: Context Compiler
 
-Universal AI Context Layer (UACL) is a context compiler and maintenance tool for AI-assisted development.
+UACL is a context compiler for AI-assisted development. It helps generate, validate, and maintain `AGENTS.md` and AI-readable project context from repository sources.
 
-Repository instruction files such as `AGENTS.md` are becoming common conventions for giving coding agents durable project guidance. UACL does not replace `AGENTS.md`. It helps generate, validate, and keep `AGENTS.md` and related context outputs fresh as a project changes.
+UACL does not replace `AGENTS.md`. It can generate and support `AGENTS.md` while compiling related Markdown and JSON context outputs. Its value is in repeatable compilation, validation, and lightweight drift detection as a repository changes.
 
-UACL analyzes repository structure, tracks existing project context, and compiles AI-consumable outputs including `AGENTS.md`, Markdown, and JSON.
+Existing source code, README files, documentation, and architecture decision records remain the source of truth. UACL compiles from those sources and preserves explicitly maintained context fields; it does not supersede disciplined project documentation.
 
-> **Short description:** Context compiler for AI-assisted development: generate, validate, and refresh AGENTS.md, Markdown, and JSON context from your repository.
+UACL is experimental. Its current analysis and validation are intentionally lightweight.
+
+> **Suggested GitHub About:** Context compiler for AI-assisted development. Generate, validate, and maintain AGENTS.md and AI-readable project context from repository sources.
 
 ## Why UACL
 
-The problem is not only moving context between AI tools. Context is often fragmented across source code, README files, documentation, architecture decisions, task notes, and existing agent instructions. Even when a project has an `AGENTS.md`, it can become stale as files move and decisions change.
+Project context is often distributed across source code, README files, documentation, architecture decisions, task notes, and existing agent instructions. Even when a project has an `AGENTS.md`, it can become stale as files move and decisions change.
 
 UACL provides a lightweight maintenance workflow:
 
@@ -19,7 +21,7 @@ UACL provides a lightweight maintenance workflow:
 - **Validate:** detect missing referenced files, empty important sections, missing outputs, and stale exports.
 - **Preserve:** keep human-authored goals, decisions, constraints, tasks, and AI instructions when generated repository analysis is refreshed.
 
-UACL does not solve AI memory and does not compete with repository instruction standards. It maintains useful context artifacts that existing AI tools can consume.
+UACL supports repository instruction conventions by maintaining useful context artifacts that existing AI tools can consume.
 
 ## Context Compiler Model
 
@@ -118,7 +120,7 @@ Additional commands:
 ```bash
 aicontext init
 aicontext inspect-routes
-aicontext export --output-dir ./context-handoff
+aicontext export --output-dir ./compiled-context
 ```
 
 ## Canonical Context
@@ -161,6 +163,19 @@ The schema also records:
 
 Warnings are recorded in the canonical context. This is a practical first pass, not semantic validation of every instruction.
 
+## Related Tools / Positioning
+
+UACL exists in a growing ecosystem of tools and conventions around AI context files and `AGENTS.md`. It does not claim to define or own this category.
+
+UACL currently focuses on:
+
+- repository context compilation
+- `AGENTS.md` export
+- drift and staleness checks
+- preserving human-authored context fields
+
+Other tools may provide deeper semantic or AST-based drift detection. UACL's current drift checks are intentionally lightweight.
+
 ## Optional Agent Workflows
 
 Shared agent roles and orchestration are a possible use of compiled context, not UACL's core promise. See [`examples/agent-orchestration.yaml`](examples/agent-orchestration.yaml) for a lightweight future-direction example.
@@ -185,7 +200,12 @@ GitHub Actions runs the test suite, Ruff linting, and formatting checks on every
 
 ## Current Limitations
 
-UACL currently uses lightweight repository analysis and explicit YAML fields. It does not yet semantically merge arbitrary documentation, import issues from external trackers, resolve conflicting instructions, or automatically update a hand-authored root `AGENTS.md`.
+- Drift detection is currently timestamp- and reference-based, not semantic.
+- Documentation and ADR ingestion is lightweight.
+- UACL does not automatically solve context loss between AI tools.
+- UACL does not replace disciplined documentation or make generated outputs authoritative over their repository sources.
+- UACL is not yet a full semantic indexer or MCP server.
+- UACL does not yet import issues from external trackers, resolve conflicting instructions, or automatically update a hand-authored root `AGENTS.md`.
 
 ## License
 
