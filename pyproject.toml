@@ -10,19 +10,39 @@ dev = [
 
 [project]
 authors = [
-  { name = "OpenAI Codex" }
+  { name = "Abraham Bobrovsky" },
+  { name = "Marco Benedetti" },
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Software Development :: Documentation",
 ]
 dependencies = [
   "PyYAML~=6.0.1",
   "typer~=0.24.1",
 ]
-description = "Generate a machine-readable repository context map for AI coding agents."
+description = "Universal AI Context Layer (UACL): portable, model-independent context for AI-assisted development."
 dynamic = [
   "version",
 ]
-license = "MIT"
+keywords = [
+  "ai",
+  "context-engineering",
+  "developer-tools",
+  "agents",
+  "llm",
+  "code-navigation",
+  "ai-workflow",
+  "uacl",
+]
+license = "Apache-2.0"
 license-files = ["LICENSE"]
-name = "ai-context-map"
+name = "universal-ai-context-layer"
 readme = "README.md"
 requires-python = ">=3.11"
 

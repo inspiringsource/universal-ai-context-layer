@@ -1,0 +1,35 @@
+context_layer: Universal AI Context Layer
+short_name: UACL
+coordination_model: All agents read and update the same portable, model-independent context.
+
+agent_roles:
+  - name: Coordinator Agent
+    responsibility: Prioritize work, assign scoped tasks, and maintain shared context.
+    updates:
+      - current_tasks
+      - known_issues
+  - name: Research Agent
+    responsibility: Investigate options and record evidence for decisions.
+    updates:
+      - decisions
+      - known_issues
+  - name: Coding Agent
+    responsibility: Implement current tasks within architecture and project constraints.
+    reads:
+      - architecture
+      - navigation_map
+      - task_routes
+      - constraints
+  - name: Architecture Agent
+    responsibility: Maintain system boundaries and architecture decisions.
+    updates:
+      - architecture
+      - decisions
+      - constraints
+  - name: Reviewer Agent
+    responsibility: Review changes against goals, decisions, constraints, and known issues.
+    reads:
+      - project_goals
+      - decisions
+      - constraints
+      - known_issues

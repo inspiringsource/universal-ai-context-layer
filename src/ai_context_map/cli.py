@@ -1,19 +1,24 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Annotated
 
 import typer
 
+from ai_context_map.commands.export_cmd import export_context
 from ai_context_map.commands.generate_cmd import generate_context
 from ai_context_map.commands.init_cmd import run_init
 from ai_context_map.commands.inspect_cmd import inspect_context
 
-
-app = typer.Typer(help="Generate AI-readable repository context maps.")
+app = typer.Typer(help="aicontext: CLI for Universal AI Context Layer (UACL).")
 
 
 @app.command()
-def init(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True)) -> None:
+def init(
+    path: Annotated[
+        Path, typer.Argument(exists=True, file_okay=False, resolve_path=True)
+    ] = Path(),
+) -> None:
     """Initialize config and provenance files."""
     created = run_init(path)
     if created:
@@ -25,8 +30,12 @@ def init(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, re
 
 
 @app.command()
-def generate(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True)) -> None:
-    """Generate .ai/context.yaml for a repository."""
+def generate(
+    path: Annotated[
+        Path, typer.Argument(exists=True, file_okay=False, resolve_path=True)
+    ] = Path(),
+) -> None:
+    """Generate the canonical UACL context file at .ai/context.yaml."""
     document = generate_context(path)
     typer.echo(f"Project: {document.project.name}")
     typer.echo(f"Languages: {', '.join(document.project.detected_languages) or 'none'}")
@@ -37,10 +46,52 @@ def generate(path: Path = typer.Argument(Path("."), exists=True, file_okay=False
         typer.echo(f"  - {entry.path} ({entry.confidence:.2f})")
 
 
+@app.command("export")
+def export(
+    path: Annotated[
+        Path, typer.Argument(exists=True, file_okay=False, resolve_path=True)
+    ] = Path(),
+    output_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-dir",
+            "-o",
+            file_okay=False,
+            resolve_path=True,
+            help="Directory for preferred UACL exports and compatibility aliases.",
+        ),
+    ] = None,
+) -> None:
+    """Export portable UACL Markdown and JSON files, plus compatibility aliases."""
+    written = export_context(path, output_dir)
+    typer.echo("Exported:")
+    for item in written:
+        typer.echo(f"  - {item}")
+
+
 @app.command()
-def inspect(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True)) -> None:
+def inspect(
+    path: Annotated[
+        Path, typer.Argument(exists=True, file_okay=False, resolve_path=True)
+    ] = Path(),
+) -> None:
     """Print top results from an existing context file."""
     document = inspect_context(path)
+    typer.echo("Project goals:")
+    for goal in document.get("project_goals", [])[:5]:
+        typer.echo(f"  - {goal}")
+    typer.echo("Current tasks:")
+    for task in document.get("current_tasks", [])[:5]:
+        typer.echo(f"  - {task}")
+    typer.echo("Decisions:")
+    for decision in document.get("decisions", [])[:5]:
+        if isinstance(decision, dict):
+            title = (
+                decision.get("title") or decision.get("decision") or "Untitled decision"
+            )
+        else:
+            title = decision
+        typer.echo(f"  - {title}")
     typer.echo("Entry points:")
     for entry in document.get("architecture", {}).get("entry_points", [])[:5]:
         typer.echo(f"  - {entry['path']} ({entry['confidence']})")
@@ -53,7 +104,11 @@ def inspect(path: Path = typer.Argument(Path("."), exists=True, file_okay=False,
 
 
 @app.command("inspect-routes")
-def inspect_routes(path: Path = typer.Argument(Path("."), exists=True, file_okay=False, resolve_path=True)) -> None:
+def inspect_routes(
+    path: Annotated[
+        Path, typer.Argument(exists=True, file_okay=False, resolve_path=True)
+    ] = Path(),
+) -> None:
     """Print the planning-oriented routes derived from the generated context file."""
     document = inspect_context(path)
     typer.echo("Task routes:")
@@ -64,7 +119,9 @@ def inspect_routes(path: Path = typer.Argument(Path("."), exists=True, file_okay
     typer.echo("Top anchors:")
     for anchor in document.get("anchors", [])[:5]:
         line = f":{anchor['line']}" if anchor.get("line") else ""
-        typer.echo(f"  - {anchor['file']}{line} -> {anchor['symbol']} [{anchor['symbol_type']}]")
+        typer.echo(
+            f"  - {anchor['file']}{line} -> {anchor['symbol']} [{anchor['symbol_type']}]"
+        )
     typer.echo("Importance reasons:")
     for module in document.get("architecture", {}).get("core_modules", [])[:5]:
         typer.echo(f"  - {module['path']}: {', '.join(module.get('reasons', []))}")

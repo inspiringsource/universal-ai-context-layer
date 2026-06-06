@@ -1,37 +1,78 @@
-# AI Context Map
+# Universal AI Context Layer
 
-A CLI tool that helps developers and AI agents navigate codebases faster by identifying relevant files and guiding task-focused exploration.
+Universal AI Context Layer (UACL) is a portable, model-independent context layer for AI-assisted development.
 
-## Why it matters
+The project began as an AI context map focused on repository navigation. UACL expands that idea into a vendor-neutral continuity layer that combines repository intelligence with durable project knowledge: goals, architecture, decisions, constraints, tasks, known issues, AI instructions, and agent roles.
 
-- developers and AI tools waste time opening irrelevant files
-- large repos are hard to navigate
-- fixes are often too local and miss system-level impact
+UACL helps developers carry the same project context through Claude, ChatGPT, Cursor, Codex, Gemini, and future AI tools without repeatedly rebuilding context from isolated conversations.
 
-## Example
+## Why UACL
 
-```bash
-aicontext plan "fix API bug"
+AI-assisted development often fragments project knowledge across tools and chat sessions. Switching tools can mean repeating architecture decisions, losing constraints, and creating inconsistent implementation plans.
+
+UACL provides a shared source of truth that is:
+
+- **Portable:** export project context as Markdown or JSON.
+- **Model-independent:** use the same context across vendors and models.
+- **Structured:** preserve goals, architecture, decisions, constraints, tasks, issues, instructions, and agent roles.
+- **Repository-aware:** identify important files, entry points, code anchors, hotspots, and task-focused routes.
+- **Workflow-oriented:** maintain continuity between research, architecture, implementation, and review.
+- **Versionable:** keep the canonical context file alongside the codebase.
+
+UACL does not claim to solve AI memory. It provides a practical, explicit context handoff layer that developers and agents can inspect, edit, version, and transfer.
+
+## Cross-Model Continuity
+
+```text
+Claude -> ChatGPT -> Cursor -> Codex -> Gemini
+           same project context
+           same decisions
+           same constraints
+           continuous developer workflow
 ```
 
-The intended result is a short, task-focused reading list: likely entry points, important related modules, and the files most likely to be affected by the change.
+The canonical `.ai/context.yaml` combines generated repository intelligence with human-authored project context. Running `aicontext generate` refreshes repository analysis while preserving durable continuity fields already recorded in the file.
 
-In the current prototype, that planning data is generated with `aicontext generate` and exposed through `aicontext inspect-routes`.
+## Portable Exports
 
-## What it does
+`aicontext export` writes preferred UACL exports:
 
-- builds repository structure
-- ranks important files
-- groups related code
-- produces task-aware plans
+- `.ai/exports/UACL_CONTEXT.md`
+- `.ai/exports/uacl-context.json`
 
-## How it works
+It also writes compatibility aliases for existing integrations:
 
-- Structure: scans source files and builds a lightweight dependency graph.
-- Memory: writes a shared `.ai/context.yaml` file with ranked modules, anchors, hotspots, and task routes.
-- Planning: uses those precomputed routes to narrow where an agent should start for a bugfix, feature, API change, config change, or test task.
+- `.ai/exports/AI_CONTEXT.md`
+- `.ai/exports/project-context.json`
+
+The preferred and compatibility files contain equivalent context.
+
+## Demo Workflow
+
+1. A developer starts a project with Claude and defines initial goals and architecture.
+2. UACL scans the repository and stores generated context plus project decisions, tasks, and constraints in `.ai/context.yaml`.
+3. The developer exports `UACL_CONTEXT.md` or `uacl-context.json`.
+4. The developer switches to ChatGPT, which reads the portable context and continues without a complete project re-explanation.
+5. The developer switches to Cursor or Codex for implementation using the same decisions, constraints, tasks, and important-file guidance.
+6. Reviewer and architecture agents read and update the shared context for the next workflow stage.
+
+## Agent Orchestration
+
+Specialized agents can coordinate through the same UACL context instead of isolated conversations:
+
+| Agent | Shared-context responsibility |
+| --- | --- |
+| Coordinator Agent | Prioritizes tasks and keeps agent work aligned |
+| Research Agent | Records findings, alternatives, and unresolved questions |
+| Coding Agent | Implements scoped tasks using architecture and constraints |
+| Architecture Agent | Maintains system boundaries and architecture decisions |
+| Reviewer Agent | Checks changes against goals, decisions, constraints, and known issues |
+
+See [`examples/agent-orchestration.yaml`](examples/agent-orchestration.yaml).
 
 ## Installation
+
+Requires Python 3.11 or newer.
 
 ```bash
 python -m venv .venv
@@ -39,18 +80,108 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-This installs the `aicontext` CLI entry point from [`pyproject.toml`](/Users/avi/Documents/AIcontextMap/pyproject.toml:1).
+The installed `aicontext` command is the CLI for Universal AI Context Layer. The command and `ai_context_map` Python package retain their existing names for backward compatibility.
 
-## Usage
+## CLI Workflow
+
+Initialize UACL configuration and provenance files:
 
 ```bash
 aicontext init
+```
+
+Generate or update the canonical context:
+
+```bash
 aicontext generate
+```
+
+Edit `.ai/context.yaml` to record project-specific knowledge:
+
+```yaml
+project_goals:
+  - Preserve context when developers switch AI tools.
+current_tasks:
+  - Validate context handoffs across multiple models.
+decisions:
+  - title: Keep YAML as the canonical context
+    rationale: It is readable, editable, and version-control friendly.
+constraints:
+  - Do not send repository content to a remote service automatically.
+ai_instructions:
+  - Read this context before changing code.
+agent_roles:
+  - name: Reviewer Agent
+    responsibility: Validate changes against decisions and constraints.
+```
+
+Inspect goals, tasks, decisions, important files, and hotspots:
+
+```bash
+aicontext inspect
+```
+
+Inspect task-focused routes and code anchors:
+
+```bash
 aicontext inspect-routes
 ```
 
-Generated files live under `.ai/`.
+Export portable UACL context:
 
-## Status
+```bash
+aicontext export
+```
 
-Experimental prototype.
+Choose a custom export directory:
+
+```bash
+aicontext export --output-dir ./context-handoff
+```
+
+Every command accepts an optional repository path:
+
+```bash
+aicontext generate ../another-project
+```
+
+## Context Schema
+
+UACL context includes:
+
+- project summary and goals
+- detected or declared tech stack
+- inferred architecture and important files
+- current tasks and task-focused routes
+- decisions and rationale
+- constraints and known issues
+- AI instructions and agent roles
+- code anchors, hotspots, and generation metrics
+
+Generated repository intelligence is refreshed by `aicontext generate`. Human-authored continuity fields are preserved from the existing canonical file.
+
+## Examples
+
+- [`examples/UACL_CONTEXT.md`](examples/UACL_CONTEXT.md): preferred portable Markdown handoff
+- [`examples/uacl-context.json`](examples/uacl-context.json): preferred machine-readable handoff
+- [`examples/AI_CONTEXT.md`](examples/AI_CONTEXT.md): compatibility Markdown filename
+- [`examples/project-context.json`](examples/project-context.json): compatibility JSON filename
+- [`examples/agent-orchestration.yaml`](examples/agent-orchestration.yaml): shared agent roles
+
+## Compatibility
+
+The repository and Python distribution use the name `universal-ai-context-layer`. Existing technical identifiers remain where changing them would unnecessarily break users:
+
+- CLI command: `aicontext`
+- Python import package: `ai_context_map`
+- configuration file: `.aicontext.toml`
+- canonical context file: `.ai/context.yaml`
+- compatibility exports: `AI_CONTEXT.md` and `project-context.json`
+
+## Current Scope
+
+UACL is an experimental prototype. It currently analyzes Python, JavaScript, and TypeScript repository structure, preserves explicit project context, and exports portable Markdown and JSON handoffs. It does not connect directly to AI provider APIs or automatically merge concurrent agent updates.
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).

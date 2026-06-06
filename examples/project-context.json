@@ -1,0 +1,88 @@
+{
+  "uacl_version": 2,
+  "project": {
+    "name": "universal-ai-context-layer-demo",
+    "root": ".",
+    "detected_languages": [
+      "python"
+    ],
+    "summary": "A vendor-neutral context layer that preserves project knowledge across AI models, tools, and agents."
+  },
+  "project_goals": [
+    "Keep architecture decisions available across Claude, ChatGPT, Cursor, Codex, and Gemini.",
+    "Give specialized agents one shared source of truth."
+  ],
+  "tech_stack": [
+    "Python 3.11",
+    "Typer",
+    "PyYAML"
+  ],
+  "architecture": {
+    "entry_points": [
+      {
+        "path": "src/ai_context_map/cli.py",
+        "confidence": 0.95,
+        "reasons": [
+          "Backward-compatible UACL CLI entry point"
+        ]
+      }
+    ],
+    "core_modules": [],
+    "layers": [
+      {
+        "name": "src",
+        "role": "source"
+      }
+    ]
+  },
+  "navigation_map": {
+    "directories": [],
+    "key_files": [
+      {
+        "path": "src/ai_context_map/cli.py",
+        "role": "entrypoint",
+        "importance": "critical"
+      }
+    ]
+  },
+  "current_tasks": [
+    "Validate UACL context handoffs with multiple AI tools."
+  ],
+  "decisions": [
+    {
+      "title": "Canonical YAML context",
+      "rationale": "YAML is readable, editable, and version-control friendly."
+    }
+  ],
+  "constraints": [
+    "Do not send repository content to remote services automatically."
+  ],
+  "known_issues": [
+    "Concurrent agent updates are not automatically merged."
+  ],
+  "ai_instructions": [
+    "Read the complete UACL context before proposing changes."
+  ],
+  "agent_roles": [
+    {
+      "name": "Coordinator Agent",
+      "responsibility": "Maintains priorities and delegates scoped work."
+    },
+    {
+      "name": "Coding Agent",
+      "responsibility": "Implements current tasks within recorded constraints."
+    },
+    {
+      "name": "Reviewer Agent",
+      "responsibility": "Validates changes against goals and decisions."
+    }
+  ],
+  "task_routes": {},
+  "hotspots": [],
+  "anchors": [],
+  "provenance": {
+    "enabled": false,
+    "history_file": ".ai/history.yaml"
+  },
+  "metrics": {}
+}

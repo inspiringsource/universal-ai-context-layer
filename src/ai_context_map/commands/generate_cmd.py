@@ -3,14 +3,15 @@ from __future__ import annotations
 from collections import Counter
 from pathlib import Path
 from time import perf_counter
+from typing import Any
+
+import yaml
 
 from ai_context_map.config import load_config
 from ai_context_map.emitter.yaml_writer import write_context_yaml
 from ai_context_map.graph.builder import GraphBuilder, graph_metrics
 from ai_context_map.graph.ranking import rank_files
 from ai_context_map.graph.roles import classify_directory_role
-from ai_context_map.navigation.anchors import build_anchors
-from ai_context_map.navigation.routes import build_task_routes
 from ai_context_map.models.context import (
     ContextDocument,
     CoreModule,
@@ -22,6 +23,8 @@ from ai_context_map.models.context import (
     ProjectSummary,
     ProvenanceInfo,
 )
+from ai_context_map.navigation.anchors import build_anchors
+from ai_context_map.navigation.routes import build_task_routes
 from ai_context_map.scanner.walker import scan_repository
 
 
@@ -47,13 +50,23 @@ def generate_context(root: Path) -> ContextDocument:
         node = nodes[item.path]
         if node.role in {"test", "config"} and item.score < 8:
             continue
-        importance = "critical" if item.score >= 8 else "high" if item.score >= 4 else "medium"
+        importance = (
+            "critical" if item.score >= 8 else "high" if item.score >= 4 else "medium"
+        )
         if len(key_files) < 8:
-            key_files.append(KeyFile(path=item.path, role=node.role, importance=importance))
-        if node.role == "entrypoint" or any("main" in reason or "entrypoint" in reason for reason in item.reasons):
+            key_files.append(
+                KeyFile(path=item.path, role=node.role, importance=importance)
+            )
+        if node.role == "entrypoint" or any(
+            "main" in reason or "entrypoint" in reason for reason in item.reasons
+        ):
             confidence = min(0.99, 0.45 + (item.score / 20.0))
             entry_points.append(
-                EntryPoint(path=item.path, confidence=round(confidence, 2), reasons=item.reasons[:3])
+                EntryPoint(
+                    path=item.path,
+                    confidence=round(confidence, 2),
+                    reasons=item.reasons[:3],
+                )
             )
         core_modules.append(
             CoreModule(
@@ -63,7 +76,9 @@ def generate_context(root: Path) -> ContextDocument:
                 pagerank_score=item.pagerank_score,
             )
         )
-        if item.pagerank_score > 0.0 and (metrics["incoming"].get(item.path, 0) >= 2 or item.pagerank_score >= 0.15):
+        if item.pagerank_score > 0.0 and (
+            metrics["incoming"].get(item.path, 0) >= 2 or item.pagerank_score >= 0.15
+        ):
             hotspots.append(
                 Hotspot(
                     path=item.path,
@@ -80,32 +95,42 @@ def generate_context(root: Path) -> ContextDocument:
     ]
 
     detected_languages = sorted(scan_result.languages)
+    existing_context = _load_existing_context(root / config.output_path)
     architecture = {
         "entry_points": entry_points[:5],
         "core_modules": core_modules[:10],
         "top_pagerank_nodes": [
             {"path": item.path, "pagerank_score": item.pagerank_score}
-            for item in sorted(ranked, key=lambda ranked_item: (-ranked_item.pagerank_score, ranked_item.path))[:5]
+            for item in sorted(
+                ranked,
+                key=lambda ranked_item: (-ranked_item.pagerank_score, ranked_item.path),
+            )[:5]
             if item.pagerank_score > 0.0
         ],
         "layers": _infer_layers(nodes),
     }
     document = ContextDocument(
-        aicontext_version=2,
+        uacl_version=2,
         project=ProjectSummary(
             name=root.resolve().name,
             root=".",
             detected_languages=detected_languages,
-            summary=None,
+            summary=existing_context.get("project", {}).get("summary"),
         ),
         architecture=architecture,
         navigation_map=NavigationMap(directories=directories, key_files=key_files),
         hotspots=hotspots[:10],
         anchors=anchors,
         task_routes=task_routes,
-        constraints=[],
-        known_issues=[],
+        constraints=list(existing_context.get("constraints", [])),
+        known_issues=list(existing_context.get("known_issues", [])),
         provenance=ProvenanceInfo(enabled=False, history_file=".ai/history.yaml"),
+        project_goals=list(existing_context.get("project_goals", [])),
+        tech_stack=list(existing_context.get("tech_stack", [])) or detected_languages,
+        current_tasks=list(existing_context.get("current_tasks", [])),
+        decisions=list(existing_context.get("decisions", [])),
+        ai_instructions=list(existing_context.get("ai_instructions", [])),
+        agent_roles=list(existing_context.get("agent_roles", [])),
         metrics={
             "files_scanned": len(scan_result.files),
             "source_files_analyzed": len(nodes),
@@ -113,7 +138,11 @@ def generate_context(root: Path) -> ContextDocument:
             "generation_time_ms": round((perf_counter() - started) * 1000, 2),
             "top_ranked_files": [item.path for item in ranked[:5]],
             "top_ranked_file_metadata": [
-                {"path": item.path, "score": item.score, "pagerank_score": item.pagerank_score}
+                {
+                    "path": item.path,
+                    "score": item.score,
+                    "pagerank_score": item.pagerank_score,
+                }
                 for item in ranked[:5]
             ],
         },
@@ -123,9 +152,18 @@ def generate_context(root: Path) -> ContextDocument:
     return document
 
 
+def _load_existing_context(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return data if isinstance(data, dict) else {}
+
+
 def _infer_layers(nodes: dict[str, object]) -> list[dict[str, str]]:
     layers: list[dict[str, str]] = []
     for directory in ("src", "app", "api", "core", "services", "models", "tests"):
         if any(path.startswith(f"{directory}/") or path == directory for path in nodes):
-            layers.append({"name": directory, "role": classify_directory_role(directory)})
+            layers.append(
+                {"name": directory, "role": classify_directory_role(directory)}
+            )
     return layers

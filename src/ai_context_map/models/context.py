@@ -83,7 +83,7 @@ class ProvenanceInfo:
 
 @dataclass(slots=True)
 class ContextDocument:
-    aicontext_version: int
+    uacl_version: int
     project: ProjectSummary
     architecture: dict[str, Any]
     navigation_map: NavigationMap
@@ -93,4 +93,10 @@ class ContextDocument:
     constraints: list[str]
     known_issues: list[str]
     provenance: ProvenanceInfo
+    project_goals: list[str] = field(default_factory=list)
+    tech_stack: list[str] = field(default_factory=list)
+    current_tasks: list[str] = field(default_factory=list)
+    decisions: list[dict[str, Any]] = field(default_factory=list)
+    ai_instructions: list[str] = field(default_factory=list)
+    agent_roles: list[dict[str, Any]] = field(default_factory=list)
     metrics: dict[str, Any] = field(default_factory=dict)

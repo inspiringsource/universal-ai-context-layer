@@ -23,6 +23,6 @@ env/
 # Logs
 *.log
 
-# AI Context Map output
+# Universal AI Context Layer output
 .ai/context.yaml
 .ai/history.yaml
