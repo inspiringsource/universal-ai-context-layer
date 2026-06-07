@@ -1,16 +1,45 @@
 # Universal AI Context Layer (UACL)
 
-**Context compiler for AI-assisted development.**
+**Experimental context compiler for AI-assisted development.**
 
-UACL helps generate, validate, and maintain `AGENTS.md` and AI-readable project context from repository sources.
+UACL is a prototype that generates, validates, and maintains `AGENTS.md` and AI-readable project context from repository sources.
 
-UACL does not replace `AGENTS.md`. It can generate and support `AGENTS.md` while compiling related Markdown and JSON context outputs. Its value is in repeatable compilation, validation, and lightweight drift detection as a repository changes.
+UACL does not replace `AGENTS.md`. It can generate and support `AGENTS.md` while compiling related Markdown and JSON context outputs. Its intended role is to explore repeatable compilation, validation, and lightweight drift detection as a repository changes.
 
 Existing source code, README files, documentation, and architecture decision records remain the source of truth. UACL compiles from those sources and preserves explicitly maintained context fields; it does not supersede disciplined project documentation.
 
-UACL is experimental. Its current analysis and validation are intentionally lightweight.
+## Experimental Status
 
-> **Suggested GitHub About:** Context compiler for AI-assisted development. Generate, validate, and maintain AGENTS.md and AI-readable project context from repository sources.
+UACL is an experimental project.
+
+It explores whether generated and maintained AI-readable context files can improve AI-assisted development workflows across tools such as Claude, Codex, Cursor, Gemini, and others.
+
+At this stage, there is no strong evidence that this approach consistently improves results across different models or coding agents. The project is kept open and documented as an exploration of the problem space: context drift, stale AI instructions, repository-aware context compilation, and cross-tool AI workflows.
+
+The current value of UACL is primarily:
+
+- documenting the experiment clearly
+- providing a small working prototype
+- making assumptions and limitations explicit
+- creating a base for future validation or refinement
+
+## Validation Needed
+
+The main open question is whether generated context actually helps AI coding agents in practice.
+
+Future validation should compare:
+
+- agent runs with and without UACL-generated context
+- task completion quality
+- number of irrelevant files read
+- incorrect assumptions
+- token usage
+- test selection
+- whether stale or generated context hurts more than it helps
+
+Until such testing exists, UACL should be treated as an experiment rather than a recommended production workflow.
+
+> **Suggested GitHub About:** Experimental context compiler for AI-assisted development. Generates and validates AGENTS.md and AI-readable project context from repository sources.
 
 ## Why UACL
 
@@ -23,7 +52,7 @@ UACL provides a lightweight maintenance workflow:
 - **Validate:** detect missing referenced files, empty important sections, missing outputs, and stale exports.
 - **Preserve:** keep human-authored goals, decisions, constraints, tasks, and AI instructions when generated repository analysis is refreshed.
 
-UACL supports repository instruction conventions by maintaining useful context artifacts that existing AI tools can consume.
+UACL attempts to support repository instruction conventions by maintaining context artifacts that existing AI tools can consume.
 
 ## Context Compiler Model
 
@@ -163,7 +192,7 @@ The schema also records:
 - missing or stale generated outputs
 - empty goals, constraints, tasks, or decisions
 
-Warnings are recorded in the canonical context. This is a practical first pass, not semantic validation of every instruction.
+Warnings are recorded in the canonical context. This provides a lightweight first pass, not semantic validation of every instruction.
 
 ## Related Tools / Positioning
 
@@ -201,9 +230,27 @@ uv run ruff format --check .
 
 GitHub Actions runs the test suite, Ruff linting, and formatting checks on every push and pull request.
 
+## Possible Future Direction
+
+A stronger future direction may be risk-aware context rather than broad context generation.
+
+Instead of trying to tell an AI agent everything about a repository, UACL may evolve toward surfacing task-specific warnings that are difficult to infer from code alone, such as:
+
+- files or areas involved in repeated regressions
+- hidden coupling between files that often change together
+- fragile modules with repeated hotfixes or reverts
+- AI-generated code that needs extra review
+- tests that may provide false confidence
+
+This direction still needs validation before implementation.
+
 ## Current Limitations
 
-- Drift detection is currently timestamp- and reference-based, not semantic.
+- There is no proven productivity improvement from using UACL yet.
+- Generated context may become stale.
+- Generated context may harm results when it is wrong, incomplete, or noisy.
+- Current drift checks are lightweight, timestamp- and reference-based rather than semantic.
+- UACL is not recommended as a production workflow without validation.
 - Documentation and ADR ingestion is lightweight.
 - UACL does not automatically solve context loss between AI tools.
 - UACL does not replace disciplined documentation or make generated outputs authoritative over their repository sources.

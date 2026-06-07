@@ -19,7 +19,7 @@ dependencies = [
   "PyYAML~=6.0.1",
   "typer~=0.24.1",
 ]
-description = "Context compiler for AI-assisted development. Generate, validate, and maintain AGENTS.md and AI-readable project context from repository sources."
+description = "Experimental context compiler for AI-assisted development."
 dynamic = [
   "version",
 ]
