@@ -1,0 +1,69 @@
+{
+  "scope": "Output-size measurement in characters/bytes on this repository. Not tokens, not subscription usage, not task quality. Totals count the receipt plus one bounded retrieval; real agents may retrieve more or less.",
+  "capture": [
+    {
+      "name": "verbose test run",
+      "command": "python3 -m pytest -v -p no:cacheprovider",
+      "exit_status": 0,
+      "evidence_id": "ev-20261003-174742-3334",
+      "raw_output_bytes": 6046,
+      "raw_output_lines": 67,
+      "receipt_chars": 1671,
+      "retrieval": "--grep FAILED|ERROR",
+      "retrieval_chars": 456,
+      "total_exposed_chars": 2127,
+      "exposed_fraction_of_raw": 0.352,
+      "manual_tail_20_chars_for_comparison": 1706
+    },
+    {
+      "name": "strict lint with many findings",
+      "command": "ruff check --select ALL --no-cache src",
+      "exit_status": 1,
+      "evidence_id": "ev-20261003-174744-3968",
+      "raw_output_bytes": 154254,
+      "raw_output_lines": 4371,
+      "receipt_chars": 1563,
+      "retrieval": "--grep workstate/store.py --max-chars 2500",
+      "retrieval_chars": 1193,
+      "total_exposed_chars": 2756,
+      "exposed_fraction_of_raw": 0.018,
+      "manual_tail_20_chars_for_comparison": 918
+    },
+    {
+      "name": "recent history with patches",
+      "command": "git log -p -n 15 --no-color",
+      "exit_status": 0,
+      "evidence_id": "ev-20261003-174744-8b46",
+      "raw_output_bytes": 277397,
+      "raw_output_lines": 6915,
+      "receipt_chars": 873,
+      "retrieval": "--stream stdout --lines 1-40",
+      "retrieval_chars": 2769,
+      "total_exposed_chars": 3642,
+      "exposed_fraction_of_raw": 0.013,
+      "manual_tail_20_chars_for_comparison": 405
+    },
+    {
+      "name": "navigation evaluation JSON",
+      "command": "python3 benchmarks/evaluate_navigation.py",
+      "exit_status": 0,
+      "evidence_id": "ev-20261003-174744-f653",
+      "raw_output_bytes": 3788,
+      "raw_output_lines": 113,
+      "receipt_chars": 1025,
+      "retrieval": "--grep \"(task_hits|baseline_hits|indexed_files)\"",
+      "retrieval_chars": 555,
+      "total_exposed_chars": 1580,
+      "exposed_fraction_of_raw": 0.417,
+      "manual_tail_20_chars_for_comparison": 598
+    }
+  ],
+  "checkpoint": {
+    "update_payload_chars_written_by_agent": 1366,
+    "update_report_chars": 233,
+    "entry_file_chars_without_checkpoint": 2378,
+    "entry_file_chars_with_checkpoint": 4307,
+    "checkpoint_json_chars_kept_out_of_entry_file": 3804,
+    "full_navigation_index_chars_kept_out_of_entry_file": 101613
+  }
+}

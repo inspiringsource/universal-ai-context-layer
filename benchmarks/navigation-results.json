@@ -1,0 +1,113 @@
+{
+  "scope": "Six transparent tasks on UACL itself; lexical retrieval proxy only. Not independent validation or measured usage savings.",
+  "indexed_files": 53,
+  "baseline": [
+    "src/ai_context_map/config.py",
+    "src/ai_context_map/models/graph.py",
+    "src/ai_context_map/models/context.py",
+    "src/ai_context_map/cli.py",
+    "src/ai_context_map/graph/ranking.py",
+    "src/ai_context_map/navigation/index.py"
+  ],
+  "task_hits": 6,
+  "baseline_hits": 1,
+  "full_index_characters": 76667,
+  "results": [
+    {
+      "task": "prevent export overwriting root AGENTS without force",
+      "expected": "src/ai_context_map/commands/export_cmd.py",
+      "found_in_six": true,
+      "position": 1,
+      "baseline_found_in_six": false,
+      "selected": [
+        "src/ai_context_map/commands/export_cmd.py",
+        "src/ai_context_map/cli.py",
+        "tests/test_cli.py",
+        "tests/test_pointer_index.py",
+        "src/ai_context_map/commands/inspect_cmd.py",
+        "src/ai_context_map/commands/check_cmd.py"
+      ],
+      "entry_characters": 2032
+    },
+    {
+      "task": "preserve decisions and current tasks when generate refreshes context",
+      "expected": "src/ai_context_map/commands/generate_cmd.py",
+      "found_in_six": true,
+      "position": 2,
+      "baseline_found_in_six": false,
+      "selected": [
+        "src/ai_context_map/cli.py",
+        "src/ai_context_map/commands/generate_cmd.py",
+        "tests/test_cli.py",
+        "tests/test_pointer_index.py",
+        "src/ai_context_map/commands/check_cmd.py",
+        "src/ai_context_map/models/context.py"
+      ],
+      "entry_characters": 2128
+    },
+    {
+      "task": "detect missing referenced files and stale exports",
+      "expected": "src/ai_context_map/commands/check_cmd.py",
+      "found_in_six": true,
+      "position": 1,
+      "baseline_found_in_six": false,
+      "selected": [
+        "src/ai_context_map/commands/check_cmd.py",
+        "tests/test_cli.py",
+        "src/ai_context_map/navigation/routes.py",
+        "tests/test_navigation.py",
+        "src/ai_context_map/commands/inspect_cmd.py",
+        "src/ai_context_map/emitter/portable_writer.py"
+      ],
+      "entry_characters": 2120
+    },
+    {
+      "task": "resolve relative Python imports and JavaScript module paths",
+      "expected": "src/ai_context_map/graph/builder.py",
+      "found_in_six": true,
+      "position": 1,
+      "baseline_found_in_six": false,
+      "selected": [
+        "src/ai_context_map/graph/builder.py",
+        "src/ai_context_map/navigation/index.py",
+        "tests/test_python_analyzer.py",
+        "tests/test_graph_builder.py",
+        "tests/test_pointer_index.py",
+        "src/ai_context_map/analyzers/js_ts_analyzer.py"
+      ],
+      "entry_characters": 2346
+    },
+    {
+      "task": "adjust PageRank ranking and filename weights",
+      "expected": "src/ai_context_map/graph/ranking.py",
+      "found_in_six": true,
+      "position": 1,
+      "baseline_found_in_six": true,
+      "selected": [
+        "src/ai_context_map/graph/ranking.py",
+        "src/ai_context_map/config.py",
+        "tests/test_navigation.py",
+        "tests/test_ranking.py",
+        "tests/test_graph_builder.py",
+        "tests/test_scanner.py"
+      ],
+      "entry_characters": 2153
+    },
+    {
+      "task": "render portable Markdown with decisions and task routes",
+      "expected": "src/ai_context_map/emitter/portable_writer.py",
+      "found_in_six": true,
+      "position": 1,
+      "baseline_found_in_six": false,
+      "selected": [
+        "src/ai_context_map/emitter/portable_writer.py",
+        "src/ai_context_map/cli.py",
+        "src/ai_context_map/commands/export_cmd.py",
+        "tests/test_portable_writer.py",
+        "tests/test_cli.py",
+        "tests/test_pointer_index.py"
+      ],
+      "entry_characters": 2239
+    }
+  ]
+}

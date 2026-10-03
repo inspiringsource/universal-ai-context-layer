@@ -1,0 +1,8 @@
+[
+  {"task": "prevent export overwriting root AGENTS without force", "expected": "src/ai_context_map/commands/export_cmd.py"},
+  {"task": "preserve decisions and current tasks when generate refreshes context", "expected": "src/ai_context_map/commands/generate_cmd.py"},
+  {"task": "detect missing referenced files and stale exports", "expected": "src/ai_context_map/commands/check_cmd.py"},
+  {"task": "resolve relative Python imports and JavaScript module paths", "expected": "src/ai_context_map/graph/builder.py"},
+  {"task": "adjust PageRank ranking and filename weights", "expected": "src/ai_context_map/graph/ranking.py"},
+  {"task": "render portable Markdown with decisions and task routes", "expected": "src/ai_context_map/emitter/portable_writer.py"}
+]

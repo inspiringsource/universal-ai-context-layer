@@ -26,3 +26,5 @@ env/
 # Universal AI Context Layer output
 .ai/context.yaml
 .ai/history.yaml
+.ai/START_HERE.md
+.ai/navigation.json

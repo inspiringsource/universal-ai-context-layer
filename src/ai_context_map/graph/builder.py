@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
+from posixpath import normpath
 
 from ai_context_map.analyzers.js_ts_analyzer import JsTsAnalyzer
 from ai_context_map.analyzers.python_analyzer import PythonAnalyzer
@@ -136,7 +137,7 @@ class GraphBuilder:
     def _resolve_js_path(
         self, base_dir: Path, module: str, nodes: dict[str, FileNode]
     ) -> str | None:
-        target_base = (base_dir / module).as_posix()
+        target_base = normpath((base_dir / module).as_posix())
         candidates = [target_base]
         candidates.extend(target_base + ext for ext in JS_EXTENSIONS)
         candidates.extend(

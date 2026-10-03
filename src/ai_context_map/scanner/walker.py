@@ -6,11 +6,13 @@ from ai_context_map.config import Config
 from ai_context_map.models.repo import RepositoryFile, ScanResult
 from ai_context_map.scanner.classifier import classify_file
 from ai_context_map.scanner.ignore import IgnoreRules
+from ai_context_map.workstate.store import WORK_DIR
 
 
 def scan_repository(root: Path, config: Config) -> ScanResult:
     root = root.resolve()
-    ignore_rules = IgnoreRules(exclude_paths=config.exclude_paths)
+    # Local checkpoint/evidence state is never repository content.
+    ignore_rules = IgnoreRules(exclude_paths=[*config.exclude_paths, WORK_DIR])
     include_paths = (
         [root / path for path in config.include_paths]
         if config.include_paths

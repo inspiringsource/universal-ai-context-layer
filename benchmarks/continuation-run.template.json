@@ -1,0 +1,43 @@
+{
+  "condition": "native | manual_handoff | checkpoint",
+  "agent": "e.g. Claude Code 2.x",
+  "model": "",
+  "reasoning_setting": "",
+  "repetition": 1,
+  "starting_commit": "",
+  "session1_snapshot": "git stash create hash or tarball path",
+  "session1": {
+    "stopped_at": "what was done / not done when stopped",
+    "input_tokens": null,
+    "output_tokens": null,
+    "cache_read_tokens": null,
+    "cache_write_tokens": null,
+    "handoff_or_checkpoint_output_tokens": null,
+    "checkpoint_or_handoff_chars": null
+  },
+  "session2": {
+    "input_tokens": null,
+    "output_tokens": null,
+    "cache_read_tokens": null,
+    "cache_write_tokens": null,
+    "evidence_retrieval_calls": 0,
+    "evidence_retrieval_chars": null,
+    "files_opened": [],
+    "wall_clock_minutes": null,
+    "compaction_events": 0
+  },
+  "acceptance": {
+    "context_lines_correct": null,
+    "no_duplicate_overlap": null,
+    "default_output_unchanged": null,
+    "max_chars_respected": null,
+    "streaming_preserved": null,
+    "checks_pass": null
+  },
+  "missed_constraints": [],
+  "repeated_rejected_approaches": [],
+  "unsupported_claims_in_checkpoint_or_handoff": [],
+  "clarifications_needed": 0,
+  "usage_source": "where the numbers came from; null fields mean not exposed",
+  "notes": ""
+}

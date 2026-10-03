@@ -8,6 +8,116 @@ UACL does not replace `AGENTS.md`. It can generate and support `AGENTS.md` while
 
 Existing source code, README files, documentation, and architecture decision records remain the source of truth. UACL compiles from those sources and preserves explicitly maintained context fields; it does not supersede disciplined project documentation.
 
+## Start with a small task-specific map
+
+The new experimental `pack` workflow creates a compact entry file and a local
+searchable index without calling a model:
+
+```bash
+uv run aicontext pack --task "prevent export overwriting root AGENTS without force"
+```
+
+It writes two generated files:
+
+- `.ai/START_HERE.md`: a bounded starting map, normally six references rather than a full repository dump.
+- `.ai/navigation.json`: file fingerprints, names, headings, identifiers, and import links for on-demand lookup. Source bodies are not stored.
+
+In a fresh Claude Code, Codex, Gemini, or other file-capable agent session, ask:
+
+> Read `.ai/START_HERE.md`, follow applicable repository instructions, and inspect the relevant sources before continuing my task.
+
+The format is ordinary Markdown and JSON; automatic loading and agent behaviour
+have not been verified across those tools. You must explicitly direct the agent
+to the entry file. This does not modify their conversation storage or billing.
+
+For another question, retrieve a small set of pointers instead of loading the full index:
+
+```bash
+uv run aicontext find "resolve relative imports"
+uv run aicontext find "reconcile_invoice" --limit 4 --max-chars 2000
+```
+
+`pack` also accepts a repository path and `--max-chars`. The default budget is
+6,000 **characters**, not tokens. Entire references are omitted when the budget
+is exhausted; the output reports omissions and never cuts an instruction pointer
+in half. If the required navigation text cannot fit, the command fails before
+writing outputs.
+
+Search matches paths, Python identifiers and lookup keys, Python symbols,
+JavaScript/TypeScript declaration hints, and Markdown headings. It prioritizes
+direct matches and includes related tests through resolved imports. Import-linked
+tests are candidates, not proof of coverage. This is lexical retrieval, not
+semantic understanding. A query with no matching terms reports no match rather
+than offering unrelated files as a confident answer.
+
+Selected references are checked against content fingerprints. Changed files are
+marked `STALE`, and old line numbers are suppressed. This does not detect newly
+added files or refresh unselected references; rerun `pack` after repository changes.
+
+The map points to existing `.ai/context.yaml` fields for recorded goals, decisions,
+constraints, and tasks without rewriting that file. **It does not yet import or
+summarize Claude/Codex/Gemini session history.** Root `AGENTS.md`, `CLAUDE.md`, and
+`GEMINI.md` are preserved and referenced. Ancestor and directory-scoped instructions
+must still be discovered by the agent.
+
+The index respects UACL's configured include/exclude paths and built-in ignored
+directories, prunes them before traversal, and skips symlinks and its own `.ai`
+outputs. It does not parse `.gitignore`. Files above 1 MB, invalid Python, and
+non-UTF-8 files are left unanalyzed with warnings. Only configured Python,
+JavaScript, and TypeScript sources, Markdown, and selected manifest filenames are
+indexed. Dynamic imports and JS/TS aliases are not resolved.
+
+Evaluate the navigation experiment locally:
+
+```bash
+uv run python benchmarks/evaluate_navigation.py
+```
+
+This compares six-reference task shortlists with UACL's task-independent file
+ranking on six transparent tasks in this repository. It measures file discovery,
+not completed AI tasks, time, billed usage, or savings. See
+[the live evaluation protocol](docs/navigation-evaluation.md) before making
+performance claims.
+
+## Continue in a fresh session with a checkpoint (experimental)
+
+An agent can explicitly record a small working checkpoint, keep verbose command
+output on disk, and hand over through `.ai/START_HERE.md`. No model is called,
+no hooks are installed, and no native Claude/Codex/Gemini session files are read.
+
+```bash
+# Run a noisy command; full stdout/stderr are kept, a bounded receipt is printed.
+uv run aicontext capture --label "tests" -- uv run pytest -v
+
+# Record objective, next action, constraints, decisions, verification (JSON on stdin).
+uv run aicontext checkpoint template
+uv run aicontext checkpoint update - < checkpoint-update.json
+uv run aicontext checkpoint show
+
+# Entry file: objective, next action, every active constraint, blockers, then
+# optional detail and code pointers within a character budget.
+uv run aicontext pack
+
+# In the fresh session, retrieve only what is needed.
+uv run aicontext evidence show ev-... --grep "FAILED|Error"
+uv run aicontext evidence show ev-... --stream stdout --lines 120-180
+```
+
+Records are identifiable and labelled by basis (user instruction, observed
+with evidence, agent decision, unverified assumption). Constraints are never
+truncated: if they cannot fit the budget, `pack` fails instead of writing a
+misleading briefing. State lives in `.ai/work/`, which ignores itself in Git.
+
+This reduces context only when a fresh session starts from the small entry
+file, or when a receipt replaces verbose output before it enters context. It
+does not shrink an active conversation, and writing the checkpoint has a cost.
+`uv run python benchmarks/capture_demo.py` reproduces an output-size
+measurement (characters, not tokens or billing; results in
+`benchmarks/capture-results.json`). Live continuation quality and total usage
+are **untested**. See [the workflow guide](docs/continuation-workflow.md),
+including an instruction to paste into any agent, and
+[the prepared live comparison](docs/continuation-evaluation.md).
+
 ## Experimental Status
 
 UACL is an experimental project.
