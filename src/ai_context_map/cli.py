@@ -18,9 +18,11 @@ from ai_context_map.navigation.index import (
     pack_context,
     render_brief,
 )
+from ai_context_map.navigation.retrieve import list_symbols, retrieve_symbol
 from ai_context_map.workstate.checkpoint import (
     TEMPLATE,
     briefing_sections,
+    cited_paths,
     is_current,
     load_checkpoint,
     render_checkpoint,
@@ -94,7 +96,9 @@ def pack(
                 if r["kind"] in {"objective", "next"} and is_current(r)
             )
         sections = briefing_sections(path, state)
-        output, index, brief = pack_context(path, task, max_chars, sections)
+        output, index, brief = pack_context(
+            path, task, max_chars, sections, pinned=cited_paths(state)
+        )
     except (ValueError, OSError) as exc:
         typer.echo(f"Error: {exc}", err=True)
         raise typer.Exit(1) from exc
@@ -135,6 +139,54 @@ def find_references(
     except (ValueError, OSError) as exc:
         typer.echo(f"Error: {exc}", err=True)
         raise typer.Exit(1) from exc
+
+
+@app.command("symbol")
+def symbol_source(
+    reference: Annotated[
+        str,
+        typer.Argument(
+            help="PATH::QUALIFIED.NAME (e.g. src/pay.ts::Service.refund), a unique "
+            "NAME, or PATH with --list."
+        ),
+    ],
+    list_only: Annotated[
+        bool, typer.Option("--list", help="List a file's symbols and imports.")
+    ] = False,
+    max_lines: Annotated[int, typer.Option("--max-lines", min=1)] = 80,
+    max_chars: Annotated[int, typer.Option("--max-chars", min=1000)] = 6000,
+    context: Annotated[
+        int, typer.Option("--context", min=0, max=50, help="Extra lines around it.")
+    ] = 0,
+    full: Annotated[
+        bool, typer.Option("--full", help="Whole definition, no line/character bound.")
+    ] = False,
+    root: RootOption = None,
+) -> None:
+    """Print one symbol's source, line-numbered and bounded, from the pack index.
+
+    Stored locations are used only when the file's fingerprint still matches;
+    otherwise the symbol is re-located in the current file and marked CHANGED.
+    Ambiguous names are listed, never guessed.
+    """
+    try:
+        base = _root(root)
+        index = load_index(base)
+        if list_only or (
+            "::" not in reference
+            and any(
+                record["path"] == reference.removeprefix("./")
+                for record in index["records"]
+            )
+        ):
+            text = list_symbols(base, index, reference.split("::")[0], max_chars)
+        else:
+            text = retrieve_symbol(
+                base, index, reference, max_lines, max_chars, context, full
+            )
+    except (ValueError, OSError) as exc:
+        raise _fail(exc) from exc
+    typer.echo(text, nl=False)
 
 
 @app.command(

@@ -5,7 +5,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from ai_context_map.navigation.index import build_index, render_brief, select_records
+from ai_context_map.navigation.index import (
+    build_index,
+    render_brief,
+    select_records,
+    serialize_index,
+)
 
 
 def evaluate(root: Path) -> dict:
@@ -39,7 +44,7 @@ def evaluate(root: Path) -> dict:
         "baseline": baseline,
         "task_hits": sum(result["found_in_six"] for result in results),
         "baseline_hits": sum(result["baseline_found_in_six"] for result in results),
-        "full_index_characters": len(json.dumps(index, indent=2) + "\n"),
+        "full_index_characters": len(serialize_index(index)),
         "results": results,
     }
 

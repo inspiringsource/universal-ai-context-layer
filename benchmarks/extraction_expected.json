@@ -1,0 +1,49 @@
+{
+  "note": "Hand-labelled from reading tests/fixtures/jsts. Declarations are (qualified name, kind, first line of the declaration). broken.ts records the author's evident intent: afterError is top level, although the unclosed body makes the parser nest it.",
+  "files": {
+    "src/payments.ts": {
+      "declarations": [
+        ["notADeclaration", "const", 11],
+        ["template", "const", 12],
+        ["PaymentResult", "interface", 14],
+        ["Currency", "type", 19],
+        ["chargePayment", "function", 22],
+        ["refundPayment", "function", 30],
+        ["PaymentService", "class", 37],
+        ["PaymentService.constructor", "method", 38],
+        ["PaymentService.process", "method", 40],
+        ["PaymentService.fromEnv", "method", 44],
+        ["RefundService", "class", 49],
+        ["RefundService.process", "method", 50],
+        ["RefundService.process.audit", "function", 51],
+        ["parseAmount", "function", 59]
+      ],
+      "imports": [
+        ["./gateway", 1], ["@models/order", 2], ["./format.js", 3], ["stripe", 4], ["./does-not-exist", 5]
+      ]
+    },
+    "src/format.ts": {"declarations": [["formatCents", "function", 1]], "imports": []},
+    "src/format.js": {"declarations": [["formatCents", "function", 2]], "imports": []},
+    "src/models/order.ts": {"declarations": [["Order", "interface", 1]], "imports": []},
+    "src/gateway/index.ts": {"declarations": [], "imports": [["./client", 1], ["./retry", 2]]},
+    "src/gateway/client.ts": {"declarations": [["send", "function", 1]], "imports": []},
+    "src/gateway/retry.ts": {"declarations": [["retryPolicy", "const", 1]], "imports": []},
+    "src/components/Button.jsx": {
+      "declarations": [["Button", "function", 3], ["Button.handleClick", "function", 4]],
+      "imports": [["react", 1]]
+    },
+    "src/components/List.tsx": {
+      "declarations": [["ListProps", "type", 4], ["List", "function", 9]],
+      "imports": [["react", 1], ["./Button", 2]]
+    },
+    "src/legacy/util.js": {
+      "declarations": [["path", "const", 1], ["slugify", "function", 3], ["joinSlug", "function", 7]],
+      "imports": [["path", 1]]
+    },
+    "src/broken.ts": {
+      "declarations": [["beforeError", "function", 1], ["incomplete", "function", 5], ["afterError", "const", 8]],
+      "imports": []
+    },
+    "tests/payments.test.ts": {"declarations": [], "imports": [["../src/payments", 1]]}
+  }
+}

@@ -17,6 +17,12 @@ are not held-out or independent validation. Expected-file recall does not test
 whether an agent makes the correct change, follows instructions, or reads fewer
 total tokens. Do not convert the results into a percentage of usage saved.
 
+The structural map has a separate local evaluation on two public JS/TS
+repositories, including a comparison with the previous regex extraction and a
+scripted targeted-search baseline: see
+[structural-map.md](structural-map.md#evaluation). It has the same limits: no
+agent was run.
+
 ## Live comparison
 
 Use at least ten previously unseen tasks across two additional repositories.
@@ -44,7 +50,9 @@ Record:
 - Missed constraints, repeated rejected approaches, and clarification needed.
 - Source files opened, irrelevant files opened, and pointer retrieval calls.
 - Time to the first relevant source and total time to completion.
-- Total input/output/cache usage, including any checkpoint creation and retrieval.
+- Total input/output/cache usage, including any checkpoint creation and retrieval,
+  reading of `.ai/START_HERE.md`, and every `aicontext find`/`symbol` call.
+- Whether the agent used `symbol` and `CALLS` leads or opened whole files anyway.
 - Actual subscription usage change only when exposed and reasonably attributable.
 
 Do not silently exclude unsuccessful tasks. Save failures with their entry file,

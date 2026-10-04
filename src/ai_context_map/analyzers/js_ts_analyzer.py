@@ -1,22 +1,22 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
+from ai_context_map.analyzers.js_ts_structure import extract_structure
 from ai_context_map.models.graph import ImportReference
-
-IMPORT_RE = re.compile(
-    r"""(?:import\s+(?:.+?\s+from\s+)?|export\s+.+?\s+from\s+|require\()\s*['"]([^'"]+)['"]""",
-    re.MULTILINE,
-)
 
 
 class JsTsAnalyzer:
+    """Import, re-export, require, and literal dynamic-import specifiers via Tree-sitter."""
+
     language = "javascript"
 
     def analyze(self, path: Path) -> list[ImportReference]:
-        content = path.read_text(encoding="utf-8")
+        structure = extract_structure(path.read_bytes(), path.suffix)
         return [
-            ImportReference(module=match, raw=match)
-            for match in IMPORT_RE.findall(content)
+            ImportReference(
+                module=entry["spec"], raw=entry["spec"], names=entry.get("names", [])
+            )
+            for entry in structure.imports
+            if entry["kind"] != "dynamic-import-unresolvable"
         ]

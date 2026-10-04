@@ -18,7 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from ai_context_map.navigation.index import build_index, render_brief
+from ai_context_map.navigation.index import build_index, render_brief, serialize_index
 from ai_context_map.workstate.checkpoint import (
     apply_update,
     briefing_sections,
@@ -199,7 +199,7 @@ def measure_checkpoint(evidence_root: Path, rows: list[dict]) -> dict:
         "entry_file_chars_with_checkpoint": len(with_checkpoint),
         "checkpoint_json_chars_kept_out_of_entry_file": len(full_state),
         "full_navigation_index_chars_kept_out_of_entry_file": len(
-            json.dumps(index, indent=2)
+            serialize_index(index)
         ),
     }
 

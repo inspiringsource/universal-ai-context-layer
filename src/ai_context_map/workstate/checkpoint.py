@@ -626,3 +626,31 @@ def render_checkpoint(
             "Raw JSON for one record: --id ID."
         )
     return "\n".join(lines) + "\n"
+
+
+CITATION_ORDER = ("next", "objective", "progress", "todo", "constraint", "decision")
+
+
+def cited_paths(state: dict[str, Any] | None) -> list[tuple[str, str]]:
+    """(path, record id) for files cited by current, unfinished checkpoint records.
+
+    These are the agent's recorded pointers; `pack` lists them as such, separately
+    from lexical matches. Done, retired, or superseded records are not cited.
+    """
+    if state is None:
+        return []
+    cited: list[tuple[str, str]] = []
+    for kind in CITATION_ORDER:
+        for record in state["records"]:
+            if (
+                record["kind"] != kind
+                or not is_current(record)
+                or record["status"] in {"done", "retired"}
+            ):
+                continue
+            for ref in record.get("refs", []):
+                match = REF.fullmatch(ref)
+                path = match["path"] if match else None
+                if path and path not in {p for p, _ in cited}:
+                    cited.append((path, record["id"]))
+    return cited

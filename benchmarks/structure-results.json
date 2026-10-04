@@ -1,0 +1,1906 @@
+{
+  "scope": "Local proxy on two public repositories with tasks written by the implementing agent. Measures discovery and characters under stated reading rules; no model was run. Characters are not tokens.",
+  "budget_characters": 6000,
+  "slots": 6,
+  "previous_commit": "eb84ee5",
+  "repositories": {
+    "hono": {
+      "commit": "08a023cbfde55b434fb0fb30fae35d42e4bf20aa",
+      "indexed_files": 456,
+      "parsed_symbols": 3022,
+      "partially_parsed_files": 8,
+      "index_bytes": 1183949,
+      "previous_index_characters": 1156946,
+      "previous_index_seconds": 0.347,
+      "first_build_seconds": 0.835,
+      "timing": {
+        "initial_seconds_median": 0.827,
+        "refresh_seconds_median": 0.834,
+        "runs": 3,
+        "note": "Refresh is a full rebuild; there is no incremental cache."
+      },
+      "audit": {
+        "import_statuses": {
+          "package": 198,
+          "unresolved": 14,
+          "resolved": 1095,
+          "non-literal": 1
+        },
+        "relationships": {
+          "package": 198,
+          "unresolved": 14,
+          "resolved": 1095,
+          "non-literal": 1,
+          "call-inferred": 302,
+          "call-owner-only": 18
+        },
+        "named_imports_checked": 1692,
+        "named_imports_without_matching_export": 0,
+        "mismatch_examples": [],
+        "call_target_sample_for_manual_review": [
+          "src/jsx/context.ts::createContext calls isUntrustedObject -> ['src/jsx/base.ts::isUntrustedObject'] [inferred]",
+          "src/helper/ssg/ssg.ts::fetchRoutesContent calls replaceUrlParam -> ['src/client/utils.ts::replaceUrlParam'] [inferred]",
+          "src/jsx/dom/intrinsic-element/components.ts::title calls getNameSpaceContext -> ['src/jsx/dom/render.ts::getNameSpaceContext'] [inferred]",
+          "src/client/client.ts::hc calls removeIndexString -> ['src/client/utils.ts::removeIndexString'] [inferred]",
+          "benchmarks/jsx/src/react-jsx/hono.ts::render calls buildPage -> ['benchmarks/jsx/src/react-jsx/page-hono.tsx::buildPage'] [inferred]",
+          "src/jsx/dom/hooks/index.ts::useOptimistic calls useCallback -> ['src/jsx/hooks/index.ts::useCallback'] [inferred]",
+          "src/router/linear-router/router.ts::LinearRouter.add calls checkOptionalParameter -> ['src/utils/url.ts::checkOptionalParameter'] [inferred]",
+          "src/jsx/base.ts::renderChildren calls runWithRenderContext -> ['src/jsx/context.ts::runWithRenderContext'] [inferred]",
+          "src/router/trie-router/node.ts::Node.#pushHandlerSets calls createNullObject -> ['src/router/utils.ts::createNullObject'] [inferred]",
+          "src/utils/jwt/jws.ts::importPrivateKey calls utf8Encoder.encode -> ['src/utils/jwt/utf8.ts::utf8Encoder'] [owner-only]",
+          "src/middleware/jsx-renderer/index.test.tsx::RequestUrl calls useRequestContext -> ['src/middleware/jsx-renderer/index.ts::useRequestContext'] [inferred]",
+          "src/request.ts::HonoRequest.parseBody calls parseBody -> ['src/utils/body.ts::parseBody'] [inferred]",
+          "src/adapter/bun/websocket.ts::createWSContext calls new WSContext -> ['src/helper/websocket/index.ts::WSContext'] [inferred]",
+          "src/jsx/hooks/index.ts::useRef calls buildDataStack.at -> ['src/jsx/dom/render.ts::buildDataStack'] [owner-only]",
+          "src/middleware/body-limit/index.ts::bodyLimit calls new HTTPException -> ['src/http-exception.ts::HTTPException'] [inferred]",
+          "src/helper/css/index.test.tsx::toString calls resolveCallback -> ['src/utils/html.ts::resolveCallback'] [inferred]",
+          "benchmarks/jsx/src/hono.ts::render calls buildPage -> ['benchmarks/jsx/src/page.tsx::buildPage'] [inferred]",
+          "src/middleware/ip-restriction/index.ts::buildMatcher.registerStaticRule calls convertIPv4ToBinary -> ['src/utils/ipaddr.ts::convertIPv4ToBinary'] [inferred]",
+          "src/helper/ssg/middleware.ts::ssgParams calls isDynamicRoute -> ['src/helper/ssg/utils.ts::isDynamicRoute'] [inferred]",
+          "src/helper/ssg/ssg.ts::fetchRoutesContent calls isDynamicRoute -> ['src/helper/ssg/utils.ts::isDynamicRoute'] [inferred]"
+        ]
+      }
+    },
+    "axios": {
+      "commit": "c4303eeb601d3d5914a0f425cc7539616fdc7ea7",
+      "indexed_files": 407,
+      "parsed_symbols": 2907,
+      "partially_parsed_files": 0,
+      "index_bytes": 685164,
+      "previous_index_characters": 779489,
+      "previous_index_seconds": 0.219,
+      "first_build_seconds": 0.371,
+      "timing": {
+        "initial_seconds_median": 0.359,
+        "refresh_seconds_median": 0.363,
+        "runs": 3,
+        "note": "Refresh is a full rebuild; there is no incremental cache."
+      },
+      "audit": {
+        "import_statuses": {
+          "package": 363,
+          "resolved": 348,
+          "unresolved": 3,
+          "non-literal": 1
+        },
+        "relationships": {
+          "package": 363,
+          "resolved": 348,
+          "unresolved": 3,
+          "non-literal": 1,
+          "call-owner-only": 29,
+          "call-inferred": 215
+        },
+        "named_imports_checked": 375,
+        "named_imports_without_matching_export": 5,
+        "mismatch_examples": [
+          "lib/helpers/toFormData.js:6 imports 'default' from lib/platform/node/classes/FormData.js, which has no matching parsed export",
+          "lib/platform/node/index.js:3 imports 'default' from lib/platform/node/classes/FormData.js, which has no matching parsed export",
+          "tests/browser/headers.browser.test.js:3 imports 'AxiosHeaders' from index.js, which has no matching parsed export",
+          "tests/unit/api.test.js:3 imports 'create' from index.js, which has no matching parsed export",
+          "tests/unit/core/mergeConfig.test.js:4 imports 'AxiosHeaders' from index.js, which has no matching parsed export"
+        ],
+        "call_target_sample_for_manual_review": [
+          "lib/helpers/resolveConfig.js::resolveConfig calls mergeConfig -> ['lib/core/mergeConfig.js::mergeConfig'] [inferred]",
+          "lib/core/assertParamsAcyclic.js::assertParamsAcyclic calls new AxiosError -> ['lib/core/AxiosError.js::AxiosError'] [inferred]",
+          "lib/adapters/http.js::enforceMaxContentLength calls new AxiosError -> ['lib/core/AxiosError.js::AxiosError'] [inferred]",
+          "lib/helpers/composeSignals.js::composeSignals.unsubscribe calls utils.isFunction -> ['lib/utils.js::isFunction'] [inferred]",
+          "lib/adapters/http.js::abort calls new CanceledError -> ['lib/cancel/CanceledError.js::CanceledError'] [inferred]",
+          "lib/core/mergeConfig.js::mergeParams.copy calls utils.isPlainObject -> ['lib/utils.js::isPlainObject'] [inferred]",
+          "lib/adapters/xhr.js::onloadend calls new AxiosError -> ['lib/core/AxiosError.js::AxiosError'] [inferred]",
+          "lib/adapters/http.js::setProxy calls new AxiosError -> ['lib/core/AxiosError.js::AxiosError'] [inferred]",
+          "lib/helpers/formDataToJSON.js::normalizeArrays calls utils.isPlainObject -> ['lib/utils.js::isPlainObject'] [inferred]",
+          "lib/core/mergeConfig.js::mergeParams calls utils.isUndefined -> ['lib/utils.js::isUndefined'] [inferred]",
+          "lib/core/AxiosHeaders.js::AxiosHeaders.set calls utils.hasOwnProp -> ['lib/utils.js::hasOwnProperty'] [inferred]",
+          "lib/helpers/formDataToStream.js::formDataToStream calls utils.toFiniteNumber -> ['lib/utils.js::toFiniteNumber'] [inferred]",
+          "lib/core/assertParamsAcyclic.js::assertParamsAcyclic calls utils.isArray -> ['lib/utils.js::default'] [owner-only]",
+          "lib/helpers/toFormData.js::isFlatArray calls utils.isArray -> ['lib/utils.js::default'] [owner-only]",
+          "lib/core/Axios.js::Axios._request calls utils.merge -> ['lib/utils.js::merge'] [inferred]",
+          "lib/helpers/toFormData.js::removeBrackets calls utils.endsWith -> ['lib/utils.js::endsWith'] [inferred]",
+          "lib/core/AxiosHeaders.js::AxiosHeaders.get calls utils.isRegExp -> ['lib/utils.js::isRegExp'] [inferred]",
+          "lib/core/AxiosHeaders.js::AxiosHeaders.normalize calls utils.findKey -> ['lib/utils.js::findKey'] [inferred]",
+          "lib/helpers/formDataToJSON.js::formDataToJSON.buildPath calls utils.isObject -> ['lib/utils.js::isObject'] [inferred]",
+          "lib/defaults/index.js::defaults calls utils.isFile -> ['lib/utils.js::isFile'] [inferred]"
+        ]
+      }
+    }
+  },
+  "tasks": [
+    {
+      "id": "H1",
+      "repo": "hono",
+      "task": "Reject request bodies that exceed a maximum size",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "src/middleware/body-limit/index.ts",
+          "src/middleware/cache/index.ts",
+          "src/jsx/index.test.tsx",
+          "src/adapter/aws-lambda/handler.test.ts",
+          "src/adapter/lambda-edge/handler.test.ts",
+          "src/middleware/body-limit/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/body-limit/index.ts",
+            "symbol": "bodyLimit",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 1974,
+        "followup_characters_full_files": 3156,
+        "followup_characters_windowed": 3156
+      },
+      "structural": {
+        "selected": [
+          "src/middleware/body-limit/index.ts",
+          "src/middleware/cache/index.ts",
+          "src/jsx/index.test.tsx",
+          "src/adapter/aws-lambda/handler.test.ts",
+          "src/adapter/lambda-edge/handler.test.ts",
+          "src/middleware/body-limit/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/body-limit/index.ts",
+            "symbol": "bodyLimit",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 3399,
+        "followup_characters_full_files": 3371,
+        "followup_characters_windowed": 3371
+      },
+      "search": {
+        "selected": [
+          "src/middleware/body-limit/index.ts",
+          "src/middleware/body-limit/index.test.ts",
+          "src/middleware/cache/index.ts",
+          "src/middleware/cache/index.test.ts",
+          "src/jsx/dom/index.test.tsx",
+          "src/jsx/dom/render.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/body-limit/index.ts",
+            "symbol": "bodyLimit",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 2414,
+        "followup_characters_full_files": 3156,
+        "followup_characters_windowed": 3156
+      }
+    },
+    {
+      "id": "H2",
+      "repo": "hono",
+      "task": "Compare basic auth credentials in constant time",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected_items": 2,
+      "previous": {
+        "selected": [
+          "src/utils/basic-auth.ts",
+          "src/utils/buffer.ts",
+          "src/middleware/basic-auth/index.ts",
+          "src/utils/basic-auth.test.ts",
+          "src/utils/buffer.test.ts",
+          "runtime-tests/bun/index.test.tsx"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/basic-auth/index.ts",
+            "symbol": "basicAuth",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 3,
+            "symbol_located": true
+          },
+          {
+            "file": "src/utils/buffer.ts",
+            "symbol": "timingSafeEqual",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 2,
+        "files_named": 2,
+        "symbols_located": 1,
+        "other_files_listed": 4,
+        "initial_characters": 1810,
+        "followup_characters_full_files": 7897,
+        "followup_characters_windowed": 5317
+      },
+      "structural": {
+        "selected": [
+          "src/utils/basic-auth.ts",
+          "src/utils/buffer.ts",
+          "src/middleware/basic-auth/index.ts",
+          "src/utils/basic-auth.test.ts",
+          "src/utils/buffer.test.ts",
+          "runtime-tests/bun/index.test.tsx"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/basic-auth/index.ts",
+            "symbol": "basicAuth",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 3,
+            "symbol_located": true
+          },
+          {
+            "file": "src/utils/buffer.ts",
+            "symbol": "timingSafeEqual",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 2,
+        "files_named": 2,
+        "symbols_located": 2,
+        "other_files_listed": 4,
+        "initial_characters": 3189,
+        "followup_characters_full_files": 4401,
+        "followup_characters_windowed": 4401
+      },
+      "search": {
+        "selected": [
+          "src/middleware/jwk/index.test.ts",
+          "src/client/client.test.ts",
+          "adapters/lambda-edge/test/index.test.ts",
+          ".oxlintrc.json",
+          "src/middleware/jwt/index.test.ts",
+          "src/middleware/basic-auth/index.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/basic-auth/index.ts",
+            "symbol": "basicAuth",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 6,
+            "symbol_located": false
+          },
+          {
+            "file": "src/utils/buffer.ts",
+            "symbol": "timingSafeEqual",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 2451,
+        "followup_characters_full_files": 4973,
+        "followup_characters_windowed": 4973
+      }
+    },
+    {
+      "id": "H3",
+      "repo": "hono",
+      "task": "Verify the HMAC signature of signed cookies",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected_items": 2,
+      "previous": {
+        "selected": [
+          "src/utils/cookie.ts",
+          "src/utils/jwt/jwt.ts",
+          "src/middleware/jwk/index.test.ts",
+          "src/client/client.test.ts",
+          "src/utils/cookie.test.ts",
+          "src/utils/jwt/jwt.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/helper/cookie/index.ts",
+            "symbol": "getSignedCookie",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "src/utils/cookie.ts",
+            "symbol": "parseSigned",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 1922,
+        "followup_characters_full_files": 9076,
+        "followup_characters_windowed": 9076
+      },
+      "structural": {
+        "selected": [
+          "src/utils/cookie.ts",
+          "src/middleware/jwk/index.test.ts",
+          "src/utils/jwt/jwt.ts",
+          "src/client/client.test.ts",
+          "src/utils/cookie.test.ts",
+          "src/utils/jwt/jwt.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/helper/cookie/index.ts",
+            "symbol": "getSignedCookie",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "src/utils/cookie.ts",
+            "symbol": "parseSigned",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 3707,
+        "followup_characters_full_files": 1164,
+        "followup_characters_windowed": 1164
+      },
+      "search": {
+        "selected": [
+          "src/utils/cookie.ts",
+          "src/utils/jwt/jwt.test.ts",
+          "src/utils/jwt/jws.ts",
+          "src/utils/jwt/jwa.test.ts",
+          "src/utils/cookie.test.ts",
+          "src/helper/cookie/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/helper/cookie/index.ts",
+            "symbol": "getSignedCookie",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "src/utils/cookie.ts",
+            "symbol": "parseSigned",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 2511,
+        "followup_characters_full_files": 9076,
+        "followup_characters_windowed": 9076
+      }
+    },
+    {
+      "id": "H4",
+      "repo": "hono",
+      "task": "Customize the response when no route matches a request",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "src/client/types.ts",
+          "src/helper/ssg/ssg.ts",
+          "src/client/client.test.ts",
+          "src/client/types.test.ts",
+          "src/helper/factory/index.test.ts",
+          "src/helper/ssg/plugins.test.tsx"
+        ],
+        "expected": [
+          {
+            "file": "src/hono-base.ts",
+            "symbol": "Hono.notFound",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 1875,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "structural": {
+        "selected": [
+          "src/client/types.ts",
+          "src/helper/ssg/ssg.ts",
+          "src/hono.test.ts",
+          "src/client/client.test.ts",
+          "src/client/types.test.ts",
+          "src/helper/factory/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/hono-base.ts",
+            "symbol": "Hono.notFound",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3693,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "search": {
+        "selected": [
+          "src/middleware/method-not-allowed/index.test.ts",
+          "src/middleware/compress/index.test.ts",
+          "src/middleware/method-not-allowed/index.ts",
+          "src/hono-base.ts",
+          "src/middleware/bearer-auth/index.ts",
+          "src/middleware/etag/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/hono-base.ts",
+            "symbol": "Hono.notFound",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 4,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 2450,
+        "followup_characters_full_files": 16479,
+        "followup_characters_windowed": 16479
+      }
+    },
+    {
+      "id": "H5",
+      "repo": "hono",
+      "task": "Parse multipart form submissions into an object",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "src/utils/body.ts",
+          "src/jsx/intrinsic-element/components.ts",
+          "src/validator/validator.ts",
+          "src/utils/body.test.ts",
+          "src/validator/validator.test.ts",
+          "src/request.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/utils/body.ts",
+            "symbol": "parseBody",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 1811,
+        "followup_characters_full_files": 7913,
+        "followup_characters_windowed": 7913
+      },
+      "structural": {
+        "selected": [
+          "src/utils/body.ts",
+          "src/jsx/intrinsic-element/components.ts",
+          "src/validator/validator.ts",
+          "src/utils/body.test.ts",
+          "src/validator/validator.test.ts",
+          "src/utils/buffer.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/utils/body.ts",
+            "symbol": "parseBody",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 4046,
+        "followup_characters_full_files": 825,
+        "followup_characters_windowed": 825
+      },
+      "search": {
+        "selected": [
+          "src/validator/validator.test.ts",
+          "src/utils/body.test.ts",
+          "src/utils/body.ts",
+          "src/middleware/csrf/index.test.ts",
+          "src/request.test.ts",
+          "src/request.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/utils/body.ts",
+            "symbol": "parseBody",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 3,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 2153,
+        "followup_characters_full_files": 7913,
+        "followup_characters_windowed": 7913
+      }
+    },
+    {
+      "id": "H6",
+      "repo": "hono",
+      "task": "Answer 304 Not Modified using entity tags",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected_items": 2,
+      "previous": {
+        "selected": [
+          "src/middleware/method-not-allowed/index.test.ts",
+          "src/middleware/etag/index.ts",
+          "src/jsx/base.ts",
+          "src/middleware/etag/index.test.ts",
+          "src/jsx/base.test.tsx",
+          "src/hono.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/etag/index.ts",
+            "symbol": "etag",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": false
+          },
+          {
+            "file": "src/middleware/etag/digest.ts",
+            "symbol": "generateDigest",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 1715,
+        "followup_characters_full_files": 3806,
+        "followup_characters_windowed": 3806
+      },
+      "structural": {
+        "selected": [
+          "src/middleware/method-not-allowed/index.test.ts",
+          "src/client/client.test.ts",
+          "src/middleware/etag/index.ts",
+          "src/middleware/etag/index.test.ts",
+          "src/hono.ts",
+          "src/jsx/base.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/etag/index.ts",
+            "symbol": "etag",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 3,
+            "symbol_located": false
+          },
+          {
+            "file": "src/middleware/etag/digest.ts",
+            "symbol": "generateDigest",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 2799,
+        "followup_characters_full_files": 3806,
+        "followup_characters_windowed": 3806
+      },
+      "search": {
+        "selected": [
+          "docs/CODE_OF_CONDUCT.md",
+          "src/middleware/etag/index.ts",
+          "src/client/fetch-result-please.ts",
+          "src/utils/headers.ts",
+          "src/helper/ssg/ssg.test.tsx",
+          "adapters/aws-lambda/test/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/etag/index.ts",
+            "symbol": "etag",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": false
+          },
+          {
+            "file": "src/middleware/etag/digest.ts",
+            "symbol": "generateDigest",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 2605,
+        "followup_characters_full_files": 3806,
+        "followup_characters_windowed": 3806
+      }
+    },
+    {
+      "id": "H7",
+      "repo": "hono",
+      "task": "Abort handlers that run too long",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "src/utils/stream.test.ts",
+          "src/utils/accept.test.ts",
+          "src/middleware/logger/index.test.ts",
+          "src/utils/stream.ts",
+          "benchmarks/http-server/benchmark.ts",
+          "src/jsx/context.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/timeout/index.ts",
+            "symbol": "timeout",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 1611,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "structural": {
+        "selected": [
+          "src/utils/stream.ts",
+          "src/utils/accept.test.ts",
+          "src/utils/stream.test.ts",
+          "src/middleware/logger/index.test.ts",
+          "benchmarks/http-server/benchmark.ts",
+          "src/jsx/context.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/timeout/index.ts",
+            "symbol": "timeout",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 2731,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "search": {
+        "selected": [
+          "src/helper/adapter/index.ts",
+          "src/router/reg-exp-router/router.test.ts",
+          "src/utils/stream.ts",
+          "runtime-tests/node/index.test.ts",
+          "runtime-tests/bun/index.test.tsx",
+          "src/helper/streaming/sse.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/timeout/index.ts",
+            "symbol": "timeout",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 2042,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "H8",
+      "repo": "hono",
+      "task": "Allow cross-origin requests from configured origins",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "src/middleware/cors/index.ts",
+          "src/jsx/intrinsic-elements.ts",
+          "src/middleware/timing/timing.ts",
+          "src/middleware/cors/index.test.ts",
+          "src/context.ts",
+          "src/middleware/timing/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/cors/index.ts",
+            "symbol": "cors",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 1768,
+        "followup_characters_full_files": 5395,
+        "followup_characters_windowed": 5395
+      },
+      "structural": {
+        "selected": [
+          "src/jsx/intrinsic-elements.ts",
+          "src/middleware/timing/timing.ts",
+          "src/middleware/cors/index.ts",
+          "src/middleware/cors/index.test.ts",
+          "src/utils/mime.ts",
+          "src/middleware/timing/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/cors/index.ts",
+            "symbol": "cors",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 3,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 3000,
+        "followup_characters_full_files": 3811,
+        "followup_characters_windowed": 3811
+      },
+      "search": {
+        "selected": [
+          "src/middleware/cache/index.test.ts",
+          "src/middleware/cache/index.ts",
+          "src/middleware/csrf/index.ts",
+          "src/middleware/secure-headers/secure-headers.ts",
+          "src/jsx/index.test.tsx",
+          "src/middleware/jwk/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/cors/index.ts",
+            "symbol": "cors",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 2477,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "H9",
+      "repo": "hono",
+      "task": "Pick the response language from the Accept-Language header",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected_items": 2,
+      "previous": {
+        "selected": [
+          "src/middleware/language/language.ts",
+          "src/client/types.ts",
+          "src/helper/accepts/accepts.test.ts",
+          "src/middleware/language/index.test.ts",
+          "src/client/types.test.ts",
+          "src/helper/factory/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/language/language.ts",
+            "symbol": "parseAcceptLanguage",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": true
+          },
+          {
+            "file": "src/utils/accept.ts",
+            "symbol": "parseAccept",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 1923,
+        "followup_characters_full_files": 8627,
+        "followup_characters_windowed": 2327
+      },
+      "structural": {
+        "selected": [
+          "src/middleware/language/language.ts",
+          "src/client/types.ts",
+          "src/helper/accepts/accepts.test.ts",
+          "src/middleware/language/index.test.ts",
+          "src/client/client.test.ts",
+          "src/client/types.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/language/language.ts",
+            "symbol": "parseAcceptLanguage",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": true
+          },
+          {
+            "file": "src/utils/accept.ts",
+            "symbol": "parseAccept",
+            "file_found": false,
+            "file_named": true,
+            "file_position": null,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 2,
+        "symbols_located": 2,
+        "other_files_listed": 5,
+        "initial_characters": 3691,
+        "followup_characters_full_files": 2026,
+        "followup_characters_windowed": 2026
+      },
+      "search": {
+        "selected": [
+          "src/helper/accepts/accepts.test.ts",
+          "src/middleware/compress/index.test.ts",
+          "src/adapter/aws-lambda/handler.ts",
+          "adapters/aws-lambda/src/handler.ts",
+          "src/middleware/cache/index.test.ts",
+          "src/middleware/etag/index.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/middleware/language/language.ts",
+            "symbol": "parseAcceptLanguage",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "src/utils/accept.ts",
+            "symbol": "parseAccept",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 2440,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "H10",
+      "repo": "hono",
+      "task": "Run middleware in order and call the next handler",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "src/router/trie-router/node.ts",
+          "src/types.ts",
+          "src/middleware/combine/index.ts",
+          "src/router/trie-router/node.test.ts",
+          "src/adapter/cloudflare-workers/serve-static.test.ts",
+          "src/compose.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/compose.ts",
+            "symbol": "compose",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 1889,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "structural": {
+        "selected": [
+          "src/router/trie-router/node.ts",
+          "src/hono.test.ts",
+          "src/types.ts",
+          "src/router/trie-router/node.test.ts",
+          "src/adapter/cloudflare-workers/serve-static.test.ts",
+          "src/compose.test.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/compose.ts",
+            "symbol": "compose",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3830,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "search": {
+        "selected": [
+          "src/compose.test.ts",
+          "src/middleware/combine/index.ts",
+          "src/jsx/index.test.tsx",
+          "src/jsx/dom/index.test.tsx",
+          "src/jsx/dom/render.ts",
+          "src/jsx/base.ts"
+        ],
+        "expected": [
+          {
+            "file": "src/compose.ts",
+            "symbol": "compose",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 2451,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "A1",
+      "repo": "axios",
+      "task": "Merge instance defaults with per-request options",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "index.d.ts",
+          "tests/unit/adapters/http.test.js",
+          "lib/adapters/fetch.js",
+          "tests/unit/adapters/fetch.test.js",
+          "tests/unit/adapters/runtimeConsistency.test.js",
+          "tests/unit/core/paramsMerge.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/mergeConfig.js",
+            "symbol": "mergeConfig",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 1901,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "structural": {
+        "selected": [
+          "index.d.ts",
+          "tests/unit/adapters/http.test.js",
+          "lib/adapters/fetch.js",
+          "tests/unit/adapters/fetch.test.js",
+          "tests/unit/adapters/runtimeConsistency.test.js",
+          "tests/unit/core/paramsMerge.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/mergeConfig.js",
+            "symbol": "mergeConfig",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3192,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "search": {
+        "selected": [
+          "tests/unit/adapters/http.test.js",
+          "README.md",
+          "lib/adapters/http.js",
+          "tests/unit/prototypePollution.test.js",
+          "tests/unit/core/mergeConfig.test.js",
+          "index.d.ts"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/mergeConfig.js",
+            "symbol": "mergeConfig",
+            "file_found": false,
+            "file_named": true,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 2664,
+        "followup_characters_full_files": 7485,
+        "followup_characters_windowed": 7485
+      }
+    },
+    {
+      "id": "A2",
+      "repo": "axios",
+      "task": "Serialize query parameters onto the request URL",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "lib/adapters/fetch.js",
+          "tests/module/esm/tests/helpers/esm-added-types.ts",
+          "lib/helpers/buildURL.js",
+          "tests/unit/adapters/fetch.test.js",
+          "tests/unit/adapters/runtimeConsistency.test.js",
+          "tests/unit/core/paramsMerge.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/helpers/buildURL.js",
+            "symbol": "buildURL",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 3,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 1889,
+        "followup_characters_full_files": 1819,
+        "followup_characters_windowed": 1051
+      },
+      "structural": {
+        "selected": [
+          "index.d.ts",
+          "lib/adapters/fetch.js",
+          "lib/helpers/buildURL.js",
+          "tests/unit/adapters/fetch.test.js",
+          "tests/unit/adapters/runtimeConsistency.test.js",
+          "tests/unit/core/paramsMerge.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/helpers/buildURL.js",
+            "symbol": "buildURL",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 3,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 3323,
+        "followup_characters_full_files": 2025,
+        "followup_characters_windowed": 2025
+      },
+      "search": {
+        "selected": [
+          "README.md",
+          "docs/fr/pages/advanced/request-config.md",
+          "index.d.ts",
+          "CHANGELOG.md",
+          "docs/pages/advanced/request-config.md",
+          "docs/pages/advanced/request-method-aliases.md"
+        ],
+        "expected": [
+          {
+            "file": "lib/helpers/buildURL.js",
+            "symbol": "buildURL",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3571,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "A3",
+      "repo": "axios",
+      "task": "Choose between the XHR, fetch and Node HTTP transports",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "lib/adapters/http.js",
+          "lib/adapters/xhr.js",
+          "tests/unit/adapters/http.test.js",
+          "lib/cancel/CanceledError.js",
+          "tests/browser/progress.browser.test.js",
+          "tests/unit/adapters/xhr.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/adapters/adapters.js",
+            "symbol": "getAdapter",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 1680,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "structural": {
+        "selected": [
+          "lib/adapters/http.js",
+          "lib/adapters/xhr.js",
+          "tests/unit/adapters/http.test.js",
+          "tests/unit/adapters/directAgent.test.js",
+          "tests/unit/adapters/routingConsistency.test.js",
+          "lib/cancel/CanceledError.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/adapters/adapters.js",
+            "symbol": "getAdapter",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3022,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "search": {
+        "selected": [
+          "README.md",
+          "docs/fr/pages/advanced/adapters.md",
+          "docs/pages/advanced/adapters.md",
+          "PRE_RELEASE_CHANGELOG.md",
+          "lib/adapters/http.js",
+          "CHANGELOG.md"
+        ],
+        "expected": [
+          {
+            "file": "lib/adapters/adapters.js",
+            "symbol": "getAdapter",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3968,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "A4",
+      "repo": "axios",
+      "task": "Reject responses whose status code is not 2xx",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "tests/unit/adapters/http.test.js",
+          "lib/adapters/http.js",
+          "lib/helpers/HttpStatusCode.js",
+          "tests/unit/helpers/HttpStatusCode.test.js",
+          "index.js",
+          "tests/browser/settle.browser.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/settle.js",
+            "symbol": "settle",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 1640,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "structural": {
+        "selected": [
+          "tests/unit/adapters/http.test.js",
+          "lib/adapters/http.js",
+          "lib/helpers/HttpStatusCode.js",
+          "tests/unit/adapters/directAgent.test.js",
+          "tests/unit/adapters/routingConsistency.test.js",
+          "tests/unit/helpers/HttpStatusCode.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/settle.js",
+            "symbol": "settle",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 2605,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      },
+      "search": {
+        "selected": [
+          "tests/unit/adapters/http.test.js",
+          "tests/unit/adapters/fetch.test.js",
+          "tests/unit/prototypePollution.test.js",
+          "lib/adapters/fetch.js",
+          "PRE_RELEASE_CHANGELOG.md",
+          "docs/pages/advanced/error-handling.md"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/settle.js",
+            "symbol": "settle",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3969,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "A5",
+      "repo": "axios",
+      "task": "Register request interceptors that run before sending",
+      "wording_differs": false,
+      "cross_module": true,
+      "expected_items": 2,
+      "previous": {
+        "selected": [
+          "lib/adapters/http.js",
+          "lib/core/Axios.js",
+          "tests/setup/formBodyLengthCases.js",
+          "tests/unit/axios.test.js",
+          "tests/browser/formBodyLength.browser.test.js",
+          "tests/unit/adapters/formBodyLength.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/InterceptorManager.js",
+            "symbol": "InterceptorManager.use",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "lib/core/Axios.js",
+            "symbol": "Axios._request",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 1858,
+        "followup_characters_full_files": 9210,
+        "followup_characters_windowed": 9210
+      },
+      "structural": {
+        "selected": [
+          "lib/adapters/http.js",
+          "lib/core/Axios.js",
+          "tests/setup/formBodyLengthCases.js",
+          "tests/unit/adapters/directAgent.test.js",
+          "tests/unit/adapters/http.test.js",
+          "tests/unit/adapters/routingConsistency.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/InterceptorManager.js",
+            "symbol": "InterceptorManager.use",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "lib/core/Axios.js",
+            "symbol": "Axios._request",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 3207,
+        "followup_characters_full_files": 3669,
+        "followup_characters_windowed": 3669
+      },
+      "search": {
+        "selected": [
+          "README.md",
+          "CHANGELOG.md",
+          "THREATMODEL.md",
+          "AGENTS.md",
+          ".github/copilot-instructions.md",
+          "docs/pages/advanced/testing.md"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/InterceptorManager.js",
+            "symbol": "InterceptorManager.use",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "lib/core/Axios.js",
+            "symbol": "Axios._request",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3841,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    },
+    {
+      "id": "A6",
+      "repo": "axios",
+      "task": "Join a base URL with a relative path unless it is absolute",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected_items": 3,
+      "previous": {
+        "selected": [
+          "tests/unit/adapters/http.test.js",
+          "lib/core/buildFullPath.js",
+          "lib/helpers/resolveConfig.js",
+          "tests/unit/core/buildFullPath.test.js",
+          "tests/browser/baseURLResolution.browser.test.js",
+          "tests/unit/core/dispatchRequest.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/buildFullPath.js",
+            "symbol": "buildFullPath",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": false
+          },
+          {
+            "file": "lib/helpers/combineURLs.js",
+            "symbol": "combineURLs",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "lib/helpers/isAbsoluteURL.js",
+            "symbol": "isAbsoluteURL",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 5,
+        "initial_characters": 1857,
+        "followup_characters_full_files": 2893,
+        "followup_characters_windowed": 2893
+      },
+      "structural": {
+        "selected": [
+          "tests/unit/adapters/http.test.js",
+          "lib/core/buildFullPath.js",
+          "lib/helpers/resolveConfig.js",
+          "tests/unit/core/buildFullPath.test.js",
+          "tests/browser/baseURLResolution.browser.test.js",
+          "tests/unit/core/dispatchRequest.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/buildFullPath.js",
+            "symbol": "buildFullPath",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 2,
+            "symbol_located": true
+          },
+          {
+            "file": "lib/helpers/combineURLs.js",
+            "symbol": "combineURLs",
+            "file_found": false,
+            "file_named": true,
+            "file_position": null,
+            "symbol_located": true
+          },
+          {
+            "file": "lib/helpers/isAbsoluteURL.js",
+            "symbol": "isAbsoluteURL",
+            "file_found": false,
+            "file_named": true,
+            "file_position": null,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 3,
+        "symbols_located": 3,
+        "other_files_listed": 5,
+        "initial_characters": 2992,
+        "followup_characters_full_files": 2850,
+        "followup_characters_windowed": 2850
+      },
+      "search": {
+        "selected": [
+          "README.md",
+          "CHANGELOG.md",
+          "docs/pages/advanced/request-config.md",
+          "THREATMODEL.md",
+          "docs/pages/misc/security.md",
+          "tests/unit/adapters/http.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/core/buildFullPath.js",
+            "symbol": "buildFullPath",
+            "file_found": false,
+            "file_named": true,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "lib/helpers/combineURLs.js",
+            "symbol": "combineURLs",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          },
+          {
+            "file": "lib/helpers/isAbsoluteURL.js",
+            "symbol": "isAbsoluteURL",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 1,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3900,
+        "followup_characters_full_files": 2893,
+        "followup_characters_windowed": 2893
+      }
+    },
+    {
+      "id": "A7",
+      "repo": "axios",
+      "task": "Convert submitted form data into a nested JSON object",
+      "wording_differs": false,
+      "cross_module": false,
+      "expected_items": 1,
+      "previous": {
+        "selected": [
+          "lib/helpers/formDataToJSON.js",
+          "lib/helpers/toFormData.js",
+          "tests/unit/utils.test.js",
+          "tests/unit/helpers/formDataToJSON.test.js",
+          "tests/unit/helpers/indexedFormFields.test.js",
+          "tests/unit/helpers/requestConsistency.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/helpers/formDataToJSON.js",
+            "symbol": "formDataToJSON",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 1902,
+        "followup_characters_full_files": 4155,
+        "followup_characters_windowed": 1288
+      },
+      "structural": {
+        "selected": [
+          "lib/helpers/formDataToJSON.js",
+          "lib/helpers/toFormData.js",
+          "tests/unit/utils.test.js",
+          "tests/unit/helpers/formDataToJSON.test.js",
+          "tests/unit/helpers/indexedFormFields.test.js",
+          "tests/unit/helpers/requestConsistency.test.js"
+        ],
+        "expected": [
+          {
+            "file": "lib/helpers/formDataToJSON.js",
+            "symbol": "formDataToJSON",
+            "file_found": true,
+            "file_named": true,
+            "file_position": 1,
+            "symbol_located": true
+          }
+        ],
+        "files_found": 1,
+        "files_named": 1,
+        "symbols_located": 1,
+        "other_files_listed": 5,
+        "initial_characters": 3446,
+        "followup_characters_full_files": 2184,
+        "followup_characters_windowed": 2184
+      },
+      "search": {
+        "selected": [
+          "docs/pages/advanced/html-form-processing.md",
+          "tests/unit/adapters/http.test.js",
+          "README.md",
+          "tests/unit/toFormData.test.js",
+          "CHANGELOG.md",
+          "docs/pages/advanced/multipart-form-data-format.md"
+        ],
+        "expected": [
+          {
+            "file": "lib/helpers/formDataToJSON.js",
+            "symbol": "formDataToJSON",
+            "file_found": false,
+            "file_named": false,
+            "file_position": null,
+            "symbol_located": false
+          }
+        ],
+        "files_found": 0,
+        "files_named": 0,
+        "symbols_located": 0,
+        "other_files_listed": 6,
+        "initial_characters": 3584,
+        "followup_characters_full_files": 0,
+        "followup_characters_windowed": 0
+      }
+    }
+  ],
+  "summary": {
+    "previous": {
+      "all": {
+        "tasks": 17,
+        "expected_items": 24,
+        "files_found": 12,
+        "files_named": 12,
+        "symbols_located": 4,
+        "tasks_with_all_files": 6
+      },
+      "wording_differs": {
+        "tasks": 15,
+        "expected_items": 21,
+        "files_found": 10,
+        "files_named": 10,
+        "symbols_located": 3,
+        "tasks_with_all_files": 5
+      },
+      "cross_module": {
+        "tasks": 6,
+        "expected_items": 13,
+        "files_found": 7,
+        "files_named": 7,
+        "symbols_located": 2,
+        "tasks_with_all_files": 1
+      },
+      "characters": {
+        "initial_total": 31025,
+        "followup_full_files_total": 63947,
+        "followup_windowed_total": 51432
+      }
+    },
+    "structural": {
+      "all": {
+        "tasks": 17,
+        "expected_items": 24,
+        "files_found": 12,
+        "files_named": 15,
+        "symbols_located": 14,
+        "tasks_with_all_files": 6
+      },
+      "wording_differs": {
+        "tasks": 15,
+        "expected_items": 21,
+        "files_found": 10,
+        "files_named": 13,
+        "symbols_located": 12,
+        "tasks_with_all_files": 5
+      },
+      "cross_module": {
+        "tasks": 6,
+        "expected_items": 13,
+        "files_found": 7,
+        "files_named": 10,
+        "symbols_located": 9,
+        "tasks_with_all_files": 1
+      },
+      "characters": {
+        "initial_total": 55872,
+        "followup_full_files_total": 30132,
+        "followup_windowed_total": 30132
+      }
+    },
+    "search": {
+      "all": {
+        "tasks": 17,
+        "expected_items": 24,
+        "files_found": 6,
+        "files_named": 8,
+        "symbols_located": 0,
+        "tasks_with_all_files": 3
+      },
+      "wording_differs": {
+        "tasks": 15,
+        "expected_items": 21,
+        "files_found": 6,
+        "files_named": 8,
+        "symbols_located": 0,
+        "tasks_with_all_files": 3
+      },
+      "cross_module": {
+        "tasks": 6,
+        "expected_items": 13,
+        "files_found": 3,
+        "files_named": 4,
+        "symbols_located": 0,
+        "tasks_with_all_files": 0
+      },
+      "characters": {
+        "initial_total": 49491,
+        "followup_full_files_total": 55781,
+        "followup_windowed_total": 55781
+      }
+    }
+  }
+}

@@ -8,7 +8,8 @@ modify any agent's native session files.
 ## The sequence
 
 1. **Work normally.** Use `aicontext find "symbol or task"` for bounded code
-   pointers. Optionally wrap noisy commands:
+   pointers and `aicontext symbol PATH::QUALIFIED.NAME` to read one definition
+   instead of a whole file. Optionally wrap noisy commands:
 
    ```bash
    aicontext capture --label "tests" -- uv run pytest -v
@@ -39,7 +40,11 @@ modify any agent's native session files.
 
 3. **Generate the entry file:** `aicontext pack` (optionally `--task`,
    `--max-chars`). Without `--task`, code pointers are chosen from the recorded
-   objective and next action.
+   objective and next action. Files cited in `refs` of current, unfinished
+   records are listed first, labelled `cited by checkpoint record ID
+   (agent-recorded)`. Under code pointers, the entry shows a few parsed
+   declarations and inferred import/call links (see
+   [structural-map.md](structural-map.md)).
 
 4. **Start a fresh conversation.**
 
@@ -55,7 +60,13 @@ modify any agent's native session files.
    aicontext evidence show ev-... --grep "FAILED|Error"
    aicontext evidence show ev-... --stream stdout --lines 120-180
    aicontext evidence show ev-... --stream stdout --full   # raw, unbounded
+   aicontext symbol src/billing.ts::Invoice.refund          # one definition, bounded
+   aicontext symbol src/billing.ts --list                   # declarations of one file
    ```
+
+   `symbol` re-checks the file's fingerprint: if the file changed since `pack`
+   it re-locates the definition and says `CHANGED`; ambiguous names are listed,
+   never guessed.
 
 ## Record model
 
@@ -147,7 +158,10 @@ A missing checkpoint is stated rather than implied.
 > for your own decisions, and assumptions/questions as unverified. Record
 > attempted fixes as `attempted`, not `done`; never record "tests pass" from an
 > exit status alone — read the output. For verbose commands use `aicontext
-> capture --label NAME -- CMD ...` and cite its evidence ID. Update records by
+> capture --label NAME -- CMD ...` and cite its evidence ID. To read code named
+> in `.ai/START_HERE.md`, prefer `aicontext symbol PATH::NAME` over opening
+> whole files, and treat `IMPORT`/`CALLS` lines as leads to verify, not as
+> execution flow. Update records by
 > ID instead of adding duplicates; supersede outdated ones. Before handing off,
 > run `aicontext pack` and confirm `.ai/START_HERE.md` states the objective,
 > next action, and all constraints.

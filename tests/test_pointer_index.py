@@ -43,7 +43,7 @@ def test_one_command_indexes_task_code_and_importing_test(tmp_path: Path) -> Non
     brief = (tmp_path / BRIEF_PATH).read_text()
     assert "src/payment.py" in brief
     assert "tests/test_payment.py" in brief
-    assert "reconcile_invoice:1" in brief
+    assert "DEF function reconcile_invoice(invoice) @1-2" in brief
     assert "`AGENTS.md`" in brief
     assert "`.ai/context.yaml`" in brief
     assert canonical.read_bytes() == original
@@ -69,7 +69,18 @@ def test_parent_directory_js_imports_include_related_tests(tmp_path: Path) -> No
         record for record in selected if record["path"] == "src/auth/token.ts"
     )
     assert source["imported_by"] == ["tests/token.spec.ts"]
-    assert source["symbols"] == [{"name": "renewToken", "line": 3}]
+    symbol = dict(source["symbols"][0])
+    assert {"renew", "token"} <= set(symbol.pop("terms"))
+    assert [symbol] == [
+        {
+            "name": "renewToken",
+            "line": 3,
+            "end_line": 3,
+            "kind": "function",
+            "signature": "renewToken()",
+            "exported": True,
+        }
+    ]
     assert any(
         record["path"] == "tests/token.spec.ts" and record["role"] == "test"
         for record in selected

@@ -19,12 +19,12 @@ uv run aicontext pack --task "prevent export overwriting root AGENTS without for
 
 It writes two generated files:
 
-- `.ai/START_HERE.md`: a bounded starting map, normally six references rather than a full repository dump.
-- `.ai/navigation.json`: file fingerprints, names, headings, identifiers, and import links for on-demand lookup. Source bodies are not stored.
+- `.ai/START_HERE.md`: a bounded starting map, normally six references rather than a full repository dump, with a few task-relevant declarations, imports, and call links under each code reference.
+- `.ai/navigation.json`: the complete index for on-demand lookup: file fingerprints, declarations with qualified names, line ranges and signatures, Markdown headings, import specifiers and their resolution, and syntactic call links. Source bodies are not stored.
 
 In a fresh Claude Code, Codex, Gemini, or other file-capable agent session, ask:
 
-> Read `.ai/START_HERE.md`, follow applicable repository instructions, and inspect the relevant sources before continuing my task.
+> Read `.ai/START_HERE.md`, follow applicable repository instructions, and inspect the relevant sources before continuing my task. Use `aicontext symbol PATH::NAME` to read a listed definition instead of a whole file.
 
 The format is ordinary Markdown and JSON; automatic loading and agent behaviour
 have not been verified across those tools. You must explicitly direct the agent
@@ -37,6 +37,33 @@ uv run aicontext find "resolve relative imports"
 uv run aicontext find "reconcile_invoice" --limit 4 --max-chars 2000
 ```
 
+To read one definition rather than a whole file, retrieve it by path and
+qualified name (bounded, line-numbered, fingerprint-checked):
+
+```bash
+uv run aicontext symbol src/payments.ts::RefundService.process
+uv run aicontext symbol src/payments.ts --list          # declarations and imports of one file
+uv run aicontext symbol lib/core/Axios.js::Axios --max-lines 40   # or --full
+```
+
+A map entry from a real repository (axios) looks like this:
+
+```text
+- `lib/core/buildFullPath.js` [current; business_logic]: matches path, relative, url
+  EXPORT function buildFullPath(baseURL, requestedURL, allowAbsoluteUrls, config) @68-76 (default export)
+  CALLS from buildFullPath: isAbsoluteURL → lib/helpers/isAbsoluteURL.js::isAbsoluteURL; combineURLs → lib/helpers/combineURLs.js::combineURLs
+```
+
+`EXPORT`/`DEF` lines and import specifiers are parsed syntax facts (Tree-sitter
+for JavaScript, JSX, TypeScript, and TSX; Python's `ast` for Python). `IMPORT a
+→ b`, `CALLS`, and `TEST-CANDIDATE` are inferred relationships: a resolved path,
+or a callee matched to the declaration an import binds. They are not verified
+execution flow. The checkpoint section holds conclusions an agent recorded,
+kept separate from both. Unresolved and ambiguous imports, and files the
+parser read only partially, are marked. See
+[the structural map guide](docs/structural-map.md) for notation, limits, and
+evaluation.
+
 `pack` also accepts a repository path and `--max-chars`. The default budget is
 6,000 **characters**, not tokens. Entire references are omitted when the budget
 is exhausted; the output reports omissions and never cuts an instruction pointer
@@ -44,7 +71,9 @@ in half. If the required navigation text cannot fit, the command fails before
 writing outputs.
 
 Search matches paths, Python identifiers and lookup keys, Python symbols,
-JavaScript/TypeScript declaration hints, and Markdown headings. It prioritizes
+JavaScript/TypeScript declared names (parsed with Tree-sitter), and Markdown
+headings. Declarations within a file are ranked by their names and the words
+used in their bodies. It prioritizes
 direct matches and includes related tests through resolved imports. Import-linked
 tests are candidates, not proof of coverage. This is lexical retrieval, not
 semantic understanding. A query with no matching terms reports no match rather
@@ -63,9 +92,13 @@ must still be discovered by the agent.
 The index respects UACL's configured include/exclude paths and built-in ignored
 directories, prunes them before traversal, and skips symlinks and its own `.ai`
 outputs. It does not parse `.gitignore`. Files above 1 MB, invalid Python, and
-non-UTF-8 files are left unanalyzed with warnings. Only configured Python,
-JavaScript, and TypeScript sources, Markdown, and selected manifest filenames are
-indexed. Dynamic imports and JS/TS aliases are not resolved.
+non-UTF-8 files are left unanalyzed with warnings. JS/TS files with syntax the
+grammar rejects are kept, marked `parse partial`, and declarations in the
+unparsed region are recovered by a labelled line scan. Only configured Python,
+JavaScript (`.js`, `.jsx`), and TypeScript (`.ts`, `.tsx`) sources, Markdown,
+and selected manifest filenames are indexed. Literal dynamic imports and root
+`tsconfig.json`/`jsconfig.json` `paths` are resolved; `extends`, package export
+maps, and non-literal imports are not.
 
 Evaluate the navigation experiment locally:
 
@@ -78,6 +111,18 @@ ranking on six transparent tasks in this repository. It measures file discovery,
 not completed AI tasks, time, billed usage, or savings. See
 [the live evaluation protocol](docs/navigation-evaluation.md) before making
 performance claims.
+
+The structural map was evaluated locally on 17 tasks in two public JS/TS
+repositories (hono, axios) against the previous regex version and a scripted
+targeted search, with a fixed 6,000-character entry budget. It located 14 of
+24 expected symbols (previous: 4; search: 0) and named 15 of 24 expected files
+(previous: 12; search: 8), but placed the same 12 files in the shortlist as
+before, and the entry roughly doubled (about 1,800 → 3,300 characters per
+task). Total characters exposed under the stated reading rules were about
+equal to the previous workflow's. The tasks were written by the implementer and
+informed two design changes, so this is a development benchmark, not held-out
+validation. No agent runs were made. Details and reproduction:
+[docs/structural-map.md](docs/structural-map.md#evaluation).
 
 ## Continue in a fresh session with a checkpoint (experimental)
 
@@ -226,6 +271,11 @@ uv run aicontext --help
 
 `uv.lock` keeps development environments reproducible. uv is recommended, but it is not required.
 
+Dependencies include `tree-sitter` with the `tree-sitter-javascript` and
+`tree-sitter-typescript` grammars (MIT; prebuilt wheels for common platforms).
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for versions, upstream
+URLs, and required notices.
+
 ### Alternative: venv and pip
 
 ```bash
@@ -364,9 +414,10 @@ This direction still needs validation before implementation.
 - Documentation and ADR ingestion is lightweight.
 - UACL does not automatically solve context loss between AI tools.
 - UACL does not replace disciplined documentation or make generated outputs authoritative over their repository sources.
-- UACL is not yet a full semantic indexer or MCP server.
+- UACL is not yet a full semantic indexer or MCP server. Its JS/TS map has no type or scope analysis; call links are name matches through imports.
 - UACL does not yet import issues from external trackers, resolve conflicting instructions, or automatically update a hand-authored root `AGENTS.md`.
 
 ## License
 
-Licensed under the [Apache License 2.0](LICENSE).
+Licensed under the [Apache License 2.0](LICENSE). Third-party components and
+their notices are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

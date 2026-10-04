@@ -2,16 +2,19 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
-from posixpath import normpath
 
 from ai_context_map.analyzers.js_ts_analyzer import JsTsAnalyzer
+from ai_context_map.analyzers.js_ts_structure import (
+    ResolverConfig,
+    load_resolver_config,
+    resolve_module,
+)
 from ai_context_map.analyzers.python_analyzer import PythonAnalyzer
 from ai_context_map.graph.roles import classify_role
 from ai_context_map.models.graph import DependencyEdge, FileNode, ImportReference
 from ai_context_map.models.repo import RepositoryFile, ScanResult
 
 SOURCE_ROOT_HINTS = {"src", "app", "lib"}
-JS_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"]
 
 
 class GraphBuilder:
@@ -20,8 +23,18 @@ class GraphBuilder:
         self.js_analyzer = JsTsAnalyzer()
 
     def build(
-        self, scan_result: ScanResult
+        self,
+        scan_result: ScanResult,
+        prepared: dict[str, list[ImportReference]] | None = None,
+        resolver: ResolverConfig | None = None,
     ) -> tuple[dict[str, FileNode], list[DependencyEdge]]:
+        """Build file nodes and resolved local import edges.
+
+        `prepared` holds already-extracted imports by relative path so callers
+        that have parsed a file need not parse it again.
+        """
+        prepared = prepared or {}
+        self.resolver = resolver or load_resolver_config(scan_result.root)
         source_files = [
             item for item in scan_result.files if item.is_source and item.language
         ]
@@ -39,7 +52,9 @@ class GraphBuilder:
 
         for item in source_files:
             node = nodes[item.relative_path]
-            imports = self._analyze(item)
+            imports = prepared.get(item.relative_path)
+            if imports is None:
+                imports = self._analyze(item)
             node.imports = imports
             resolved = self._resolve_imports(item, imports, python_modules, nodes)
             for target in resolved:
@@ -100,13 +115,14 @@ class GraphBuilder:
                     if module_name in python_modules:
                         resolved.add(python_modules[module_name])
         elif item.language in {"javascript", "typescript"}:
-            base_dir = Path(item.relative_path).parent
             for ref in imports:
-                if not ref.module or not ref.module.startswith("."):
+                if not ref.module:
                     continue
-                module_path = self._resolve_js_path(base_dir, ref.module, nodes)
-                if module_path:
-                    resolved.add(module_path)
+                target, _, _ = resolve_module(
+                    item.relative_path, ref.module, nodes, self.resolver
+                )
+                if target:
+                    resolved.add(target)
         return resolved
 
     def _expand_python_reference(
@@ -133,20 +149,6 @@ class GraphBuilder:
             for name in ref.names:
                 candidates.append(f"{ref.module}.{name}")
         return candidates
-
-    def _resolve_js_path(
-        self, base_dir: Path, module: str, nodes: dict[str, FileNode]
-    ) -> str | None:
-        target_base = normpath((base_dir / module).as_posix())
-        candidates = [target_base]
-        candidates.extend(target_base + ext for ext in JS_EXTENSIONS)
-        candidates.extend(
-            (Path(target_base) / f"index{ext}").as_posix() for ext in JS_EXTENSIONS
-        )
-        for candidate in candidates:
-            if candidate in nodes:
-                return candidate
-        return None
 
 
 def graph_metrics(edges: list[DependencyEdge]) -> dict[str, dict[str, int]]:

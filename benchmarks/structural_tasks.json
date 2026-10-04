@@ -1,0 +1,194 @@
+{
+  "note": "Expected files, symbols, and declaration lines were established by reading each repository's source with grep before any UACL ranking was run for these tasks. Authored by the same agent that implemented the feature; not independent or held-out validation. 'wording_differs' marks requests that do not use the expected symbol's name; 'cross_module' marks tasks whose expected sources span files.",
+  "repositories": {
+    "hono": {
+      "url": "https://github.com/honojs/hono.git",
+      "commit": "08a023cbfde55b434fb0fb30fae35d42e4bf20aa",
+      "language": "TypeScript"
+    },
+    "axios": {
+      "url": "https://github.com/axios/axios.git",
+      "commit": "c4303eeb601d3d5914a0f425cc7539616fdc7ea7",
+      "language": "JavaScript"
+    }
+  },
+  "tasks": [
+    {
+      "id": "H1",
+      "repo": "hono",
+      "task": "Reject request bodies that exceed a maximum size",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "src/middleware/body-limit/index.ts", "symbol": "bodyLimit", "line": 50}
+      ]
+    },
+    {
+      "id": "H2",
+      "repo": "hono",
+      "task": "Compare basic auth credentials in constant time",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected": [
+        {"file": "src/middleware/basic-auth/index.ts", "symbol": "basicAuth", "line": 80},
+        {"file": "src/utils/buffer.ts", "symbol": "timingSafeEqual", "line": 76}
+      ]
+    },
+    {
+      "id": "H3",
+      "repo": "hono",
+      "task": "Verify the HMAC signature of signed cookies",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected": [
+        {"file": "src/helper/cookie/index.ts", "symbol": "getSignedCookie", "line": 50},
+        {"file": "src/utils/cookie.ts", "symbol": "parseSigned", "line": 146}
+      ]
+    },
+    {
+      "id": "H4",
+      "repo": "hono",
+      "task": "Customize the response when no route matches a request",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "src/hono-base.ts", "symbol": "Hono.notFound", "line": 294}
+      ]
+    },
+    {
+      "id": "H5",
+      "repo": "hono",
+      "task": "Parse multipart form submissions into an object",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "src/utils/body.ts", "symbol": "parseBody", "line": 100}
+      ]
+    },
+    {
+      "id": "H6",
+      "repo": "hono",
+      "task": "Answer 304 Not Modified using entity tags",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected": [
+        {"file": "src/middleware/etag/index.ts", "symbol": "etag", "line": 80},
+        {"file": "src/middleware/etag/digest.ts", "symbol": "generateDigest", "line": 18}
+      ]
+    },
+    {
+      "id": "H7",
+      "repo": "hono",
+      "task": "Abort handlers that run too long",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "src/middleware/timeout/index.ts", "symbol": "timeout", "line": 38}
+      ]
+    },
+    {
+      "id": "H8",
+      "repo": "hono",
+      "task": "Allow cross-origin requests from configured origins",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "src/middleware/cors/index.ts", "symbol": "cors", "line": 63}
+      ]
+    },
+    {
+      "id": "H9",
+      "repo": "hono",
+      "task": "Pick the response language from the Accept-Language header",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected": [
+        {"file": "src/middleware/language/language.ts", "symbol": "parseAcceptLanguage", "line": 74},
+        {"file": "src/utils/accept.ts", "symbol": "parseAccept", "line": 211}
+      ]
+    },
+    {
+      "id": "H10",
+      "repo": "hono",
+      "task": "Run middleware in order and call the next handler",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "src/compose.ts", "symbol": "compose", "line": 15}
+      ]
+    },
+    {
+      "id": "A1",
+      "repo": "axios",
+      "task": "Merge instance defaults with per-request options",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "lib/core/mergeConfig.js", "symbol": "mergeConfig", "line": 77}
+      ]
+    },
+    {
+      "id": "A2",
+      "repo": "axios",
+      "task": "Serialize query parameters onto the request URL",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "lib/helpers/buildURL.js", "symbol": "buildURL", "line": 31}
+      ]
+    },
+    {
+      "id": "A3",
+      "repo": "axios",
+      "task": "Choose between the XHR, fetch and Node HTTP transports",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "lib/adapters/adapters.js", "symbol": "getAdapter", "line": 65}
+      ]
+    },
+    {
+      "id": "A4",
+      "repo": "axios",
+      "task": "Reject responses whose status code is not 2xx",
+      "wording_differs": true,
+      "cross_module": false,
+      "expected": [
+        {"file": "lib/core/settle.js", "symbol": "settle", "line": 14}
+      ]
+    },
+    {
+      "id": "A5",
+      "repo": "axios",
+      "task": "Register request interceptors that run before sending",
+      "wording_differs": false,
+      "cross_module": true,
+      "expected": [
+        {"file": "lib/core/InterceptorManager.js", "symbol": "InterceptorManager.use", "line": 67},
+        {"file": "lib/core/Axios.js", "symbol": "Axios._request", "line": 84}
+      ]
+    },
+    {
+      "id": "A6",
+      "repo": "axios",
+      "task": "Join a base URL with a relative path unless it is absolute",
+      "wording_differs": true,
+      "cross_module": true,
+      "expected": [
+        {"file": "lib/core/buildFullPath.js", "symbol": "buildFullPath", "line": 68},
+        {"file": "lib/helpers/combineURLs.js", "symbol": "combineURLs", "line": 11},
+        {"file": "lib/helpers/isAbsoluteURL.js", "symbol": "isAbsoluteURL", "line": 10}
+      ]
+    },
+    {
+      "id": "A7",
+      "repo": "axios",
+      "task": "Convert submitted form data into a nested JSON object",
+      "wording_differs": false,
+      "cross_module": false,
+      "expected": [
+        {"file": "lib/helpers/formDataToJSON.js", "symbol": "formDataToJSON", "line": 98}
+      ]
+    }
+  ]
+}

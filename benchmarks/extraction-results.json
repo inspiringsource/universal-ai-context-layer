@@ -1,0 +1,248 @@
+{
+  "fixtures": {
+    "totals": {
+      "expected_declarations": 29,
+      "regex_found_bare_name_and_line": 24,
+      "regex_found_qualified": 22,
+      "regex_false_positives": 3,
+      "tree_sitter_found_bare_name_and_line": 29,
+      "tree_sitter_found_qualified": 28,
+      "tree_sitter_false_positives": 0,
+      "expected_imports": 12,
+      "regex_imports_found": 12,
+      "regex_import_false_positives": 0,
+      "tree_sitter_imports_found": 12,
+      "tree_sitter_import_false_positives": 0,
+      "tree_sitter_symbols_with_end_line": 28
+    },
+    "files": [
+      {
+        "file": "src/payments.ts",
+        "regex_missed": [
+          "constructor@38",
+          "fromEnv@44",
+          "process@40",
+          "process@50"
+        ],
+        "regex_false_positives": [
+          "amount@26",
+          "parseAmount@60",
+          "parseAmount@61"
+        ],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/format.ts",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/format.js",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/models/order.ts",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/gateway/index.ts",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/gateway/client.ts",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/gateway/retry.ts",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/components/Button.jsx",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/components/List.tsx",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/legacy/util.js",
+        "regex_missed": [
+          "joinSlug@7"
+        ],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "src/broken.ts",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [
+          "afterError@8"
+        ],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      },
+      {
+        "file": "tests/payments.test.ts",
+        "regex_missed": [],
+        "regex_false_positives": [],
+        "tree_sitter_missed_qualified": [],
+        "tree_sitter_false_positives": [],
+        "regex_imports_missed": [],
+        "tree_sitter_imports_missed": []
+      }
+    ]
+  },
+  "repositories": {
+    "hono": {
+      "commit": "08a023cbfde55b434fb0fb30fae35d42e4bf20aa",
+      "counts": {
+        "files": 424,
+        "partial_files": 8,
+        "regex_declarations": 11213,
+        "tree_sitter_declarations": 2924,
+        "tree_sitter_nested_declarations": 399,
+        "tree_sitter_recovered_declarations": 37,
+        "exported_top_level_missed_by_regex": 23,
+        "exported_top_level_tree_sitter": 778,
+        "regex_import_specs": 1292,
+        "tree_sitter_import_specs": 1308,
+        "import_specs_only_regex": 50,
+        "import_specs_only_tree_sitter": 66,
+        "regex_in_comment_or_string": 4
+      },
+      "missed_export_kinds": {
+        "value": 13,
+        "class": 2,
+        "namespace": 2,
+        "const": 4,
+        "enum": 2
+      },
+      "examples": {
+        "regex_in_comment_or_string": [
+          "benchmarks/http-server/benchmark.ts:40 app (template_string)",
+          "benchmarks/http-server/benchmark.ts:46 id (template_string)",
+          "benchmarks/http-server/benchmark.ts:47 name (template_string)",
+          "perf-measures/type-check/scripts/generate-app.ts:8 app (template_string)"
+        ],
+        "regex_missed_export": [
+          "vite.config.ts:91 value default",
+          "vitest.config.ts:3 value default",
+          "adapters/aws-lambda/vite.config.ts:4 value default",
+          "adapters/aws-lambda/src/handler.ts:282 class EventProcessor",
+          "adapters/bun/vite.config.ts:4 value default",
+          "adapters/cloudflare-workers/vite.config.ts:4 value default",
+          "adapters/deno/vite.config.ts:4 value default",
+          "adapters/lambda-edge/vite.config.ts:4 value default"
+        ],
+        "import_differences": [
+          "vite.config.ts: regex-only [], tree-sitter-only ['./jsr.json', './package.json']",
+          "adapters/aws-lambda/src/conninfo.ts: regex-only ['./index', 'hono'], tree-sitter-only ['./types']",
+          "adapters/aws-lambda/src/handler.test.ts: regex-only [], tree-sitter-only ['./handler']",
+          "adapters/aws-lambda/src/handler.ts: regex-only ['./index', 'hono'], tree-sitter-only ['./types']",
+          "adapters/aws-lambda/src/index.ts: regex-only [], tree-sitter-only ['./types']",
+          "adapters/aws-lambda/test/index.test.ts: regex-only [], tree-sitter-only ['../src/handler', '../src/types']",
+          "adapters/aws-lambda/test/stream.test.ts: regex-only [], tree-sitter-only ['../src/types']",
+          "adapters/lambda-edge/src/index.ts: regex-only [], tree-sitter-only ['./handler']"
+        ]
+      }
+    },
+    "axios": {
+      "commit": "c4303eeb601d3d5914a0f425cc7539616fdc7ea7",
+      "counts": {
+        "files": 241,
+        "partial_files": 0,
+        "regex_declarations": 4482,
+        "tree_sitter_declarations": 1137,
+        "tree_sitter_nested_declarations": 320,
+        "tree_sitter_recovered_declarations": 0,
+        "exported_top_level_missed_by_regex": 34,
+        "exported_top_level_tree_sitter": 260,
+        "regex_import_specs": 703,
+        "tree_sitter_import_specs": 715,
+        "import_specs_only_regex": 3,
+        "import_specs_only_tree_sitter": 15,
+        "regex_in_comment_or_string": 2
+      },
+      "missed_export_kinds": {
+        "value": 16,
+        "enum": 1,
+        "const": 9,
+        "function": 7,
+        "var": 1
+      },
+      "examples": {
+        "regex_in_comment_or_string": [
+          "docs/scripts/process-sponsors.js:71 url (template_string)",
+          "docs/scripts/process-sponsors.js:113 url (template_string)"
+        ],
+        "regex_missed_export": [
+          "eslint.config.js:4 value default",
+          "index.d.ts:180 enum HttpStatusCode",
+          "index.d.ts:795 const axios",
+          "rollup.config.js:79 function default",
+          "vitest.config.js:4 value default",
+          "webpack.config.js:1 var config",
+          "docs/.vitepress/theme/index.ts:8 value default",
+          "examples/abort-controller/server.js:1 function default"
+        ],
+        "import_differences": [
+          "examples/server.js: regex-only [], tree-sitter-only [\"'file://' + path.join(__dirname, url + '.js')\"]",
+          "lib/adapters/fetch.js: regex-only [], tree-sitter-only ['../helpers/progressEventReducer.js']",
+          "lib/adapters/http.js: regex-only [], tree-sitter-only ['../helpers/progressEventReducer.js']",
+          "tests/module/esm/tests/helpers/esm-added-types.ts: regex-only [], tree-sitter-only ['axios']",
+          "tests/module/esm/tests/helpers/esm-functions.ts: regex-only [], tree-sitter-only ['axios']",
+          "tests/module/esm/tests/helpers/esm-index.ts: regex-only [], tree-sitter-only ['axios']",
+          "tests/smoke/bun/tests/import.smoke.test.ts: regex-only [], tree-sitter-only ['axios']",
+          "tests/unit/estimateDataURLDecodedBytes.test.js: regex-only [], tree-sitter-only ['../../lib/helpers/estimateDataURLDecodedBytes.js']"
+        ]
+      }
+    }
+  }
+}
