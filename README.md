@@ -163,6 +163,17 @@ are **untested**. See [the workflow guide](docs/continuation-workflow.md),
 including an instruction to paste into any agent, and
 [the prepared live comparison](docs/continuation-evaluation.md).
 
+## Architecture overview experiment
+
+[`docs/architecture-nutshell.md`](docs/architecture-nutshell.md) is a
+hand-written, roughly 400-word component overview, used only in an experiment.
+Live evaluation **was completed**: six fresh Claude Code sessions (three
+read-only investigation tasks, with and without the overview) on this
+repository. All six answers were correct. The overview did not reduce measured
+usage (total input-side tokens were about 25% higher with it), so further
+development is not recommended. This is a small internal screen, not evidence
+of savings. See [the evaluation](docs/architecture-nutshell-evaluation.md).
+
 ## Experimental Status
 
 UACL is an experimental project.

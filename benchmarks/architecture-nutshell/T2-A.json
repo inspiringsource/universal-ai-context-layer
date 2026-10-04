@@ -1,0 +1,204 @@
+{
+  "run_id": "T2-A",
+  "task": "T2",
+  "condition": "A",
+  "starting_revision": "0766e581b2f47064d2f416bc74a07c2d1c9f57c6",
+  "model_requested": "claude-opus-5-5",
+  "model_reported": "claude-opus-5-5",
+  "settings": {
+    "flags": [
+      "--model",
+      "claude-opus-5-5",
+      "--effort",
+      "medium",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--no-session-persistence",
+      "--strict-mcp-config",
+      "--no-chrome",
+      "--disable-slash-commands",
+      "--setting-sources",
+      "project,local",
+      "--tools",
+      "Read,Grep,Glob,Bash",
+      "--permission-mode",
+      "dontAsk",
+      "--permission-prompts",
+      "none",
+      "--max-budget-usd",
+      "5",
+      "--allowedTools",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git grep:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git blame:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git cat-file:*)",
+      "Bash(git rev-list:*)",
+      "Bash(git for-each-ref:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(sed -n:*)",
+      "Bash(tree:*)"
+    ],
+    "tools_available": [
+      "Bash",
+      "Glob",
+      "Grep",
+      "Read"
+    ],
+    "permission_mode": "dontAsk",
+    "mcp_servers": [],
+    "claude_code_version": "2.1.289",
+    "timeout_s": 900
+  },
+  "started_at": "2026-10-04T14:08:07.445641+00:00",
+  "wall_seconds": 52.5,
+  "timed_out": false,
+  "exit_code": 0,
+  "working_copy_unchanged": true,
+  "prompt": "You are investigating the repository in the current working directory. This is a read-only investigation: do not create, modify, or delete files, do not run commands that write files (including `aicontext` commands), and do not commit.\n\nFollow applicable repository instructions. Support each conclusion with source references (file:line, or commit hash / branch name for history). Distinguish verified facts from inference and uncertainty.\n\nTask:\nA maintainer hand-edits constraints in `.ai/context.yaml`, then runs `aicontext generate` followed by `aicontext export --write-agents-md`. Explain how those constraints travel through the components into the exported `AGENTS.md` files, and which rules a change to this flow must preserve. Then answer: if a developer adds a new hand-maintained field (for example `known_risks`) to the canonical context, what must change so it survives regeneration and appears in the exported `AGENTS.md`?\n\nFinal answer format (at most about 600 words):\n## Answer\n## Evidence\n## Uncertainty\n",
+  "output": "## Answer\n\n**How constraints get from `.ai/context.yaml` to `AGENTS.md`:**\n\n1. **`aicontext generate`** (`generate_context`). It rescans the repo and builds a brand-new `ContextDocument`. Before writing, it reads the current YAML into a plain dict with `_load_existing_context`. It copies `constraints` from that dict, along with `known_issues`, `project_goals`, `tech_stack`, `current_tasks`, `decisions`, `ai_instructions`, `agent_roles`, `generated_outputs` and `project.summary`. `yaml_writer` then turns the dataclass into a dict and overwrites the YAML completely. **The only reason a field survives is that it is in this explicit list.** Any top-level key not in the list is silently dropped.\n2. **`aicontext export --write-agents-md`** (`export_context`). It loads the YAML as a raw dict through `inspect_context`. There is no dataclass at this step, so every key passes through. It sets `generated_outputs` and clears both warning lists, then writes the YAML back. Next, `write_portable_exports` writes `.ai/exports/AGENTS.md` using `render_agents_markdown`. It writes the root `AGENTS.md` with the same renderer, but only if that file doesn't exist yet or `--force` is passed. Otherwise it returns a warning and leaves the file alone.\n3. **The renderer.** `render_agents_markdown` lists sections by hand: Project, Goals, Instructions, Constraints, Current Tasks, Important Files and Entry Points. Constraints appear as bullets from `context.get(\"constraints\", [])`. Notably, the AGENTS.md renderer has **no Known Issues or Decisions section**. Only `render_context_markdown` (UACL_CONTEXT/AI_CONTEXT) shows them. The JSON exports dump the whole dict.\n\n**Rules any change must keep:**\n- Hand-written fields are carried over on every refresh (README \"Preserve\" bullet). Scanner output gets replaced.\n- The YAML is the single canonical source. Exports are compiled from it and never edited directly.\n- A hand-written root `AGENTS.md` is not overwritten without `--force`.\n- Exports stay deterministic (the test fixture's own constraint is \"Keep exports deterministic.\"). `UACL_CONTEXT.md` must match `AI_CONTEXT.md`, and `uacl-context.json` must match `project-context.json`.\n- Renderers must handle a missing or empty field by showing \"None recorded.\" via `.get(..., [])` and `_bullet_list`.\n\n**Adding `known_risks` would take these changes:**\n1. `models/context.py`: add `known_risks: list[str] = field(default_factory=list)` to `ContextDocument`. It needs a default because it would come after other fields that have defaults.\n2. `commands/generate_cmd.py`: add `known_risks=list(existing_context.get(\"known_risks\", []))` to the `ContextDocument(...)` call. **Without this, the next `generate` deletes it.** This is the key step.\n3. `emitter/portable_writer.py`: add a `## Known Risks` section to `render_agents_markdown`, and probably to `render_context_markdown` too. Without it, the field reaches the JSON exports but not `AGENTS.md`.\n4. Optional: list it in `check_cmd._empty_sections`. Add tests in the style of `tests/test_cli.py` (keep a value through `generate`, check it in the AGENTS.md content) and `tests/test_portable_writer.py`. Update the README.\n\nNo change to `export_cmd.py` is needed, because it passes the raw dict straight through.\n\n## Evidence\n- Fields carried over: `src/ai_context_map/commands/generate_cmd.py:99`, `:119`, `:126-136`, `:195-198`. Full overwrite: `:156-157` and `src/ai_context_map/emitter/yaml_writer.py:12-16`, `:30-37`.\n- Fixed schema: `src/ai_context_map/models/context.py:84-107`.\n- Export: `src/ai_context_map/commands/export_cmd.py:20-50`. Raw YAML load: `src/ai_context_map/commands/inspect_cmd.py:10-16`.\n- Renderers: `src/ai_context_map/emitter/portable_writer.py:8-26`, `:29-69` (Constraints at `:52-54`, no Known Issues), `:127-133`, `:162-163`.\n- CLI flags: `src/ai_context_map/cli.py:361-392`.\n- Docs: `README.md:208`, `:256`, `:418`.\n- Tests: `tests/test_cli.py:57-77` and `:118-138`, `tests/test_portable_writer.py:19`, `:43-44`.\n\n## Uncertainty\n- **There is no test that `constraints` survive `generate` or show up in AGENTS.md.** `tests/test_cli.py:57-77` only checks `project_goals`. The constraints behaviour is from reading the code; I didn't run anything.\n- The version key doesn't match. The committed `.ai/context.yaml:1` uses `aicontext_version`, but `generate` writes `uacl_version` (`generate_cmd.py:114`), and the renderer accepts either (`portable_writer.py:153`). This suggests the committed file came from an older version. I infer that the next `generate` would drop the old key, but I didn't verify it.\n- Whether `known_risks` belongs in `_empty_sections` or in the other Markdown export is a design choice, not something the code requires.\n- `.ai/context.yaml:249` currently has `constraints: []`, and there is no root `AGENTS.md`, so I couldn't follow a real constraint through the existing output.",
+  "result_subtype": "success",
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 4114,
+    "thinking_tokens_within_output": 239,
+    "cache_creation_input_tokens": 26181,
+    "cache_read_input_tokens": 112726,
+    "total_input_side_tokens": 138921,
+    "model_usage": {
+      "claude-opus-5-5": {
+        "inputTokens": 14,
+        "outputTokens": 4114,
+        "cacheReadInputTokens": 112726,
+        "cacheCreationInputTokens": 26181,
+        "webSearchRequests": 0,
+        "costUSD": 0.3143292,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 239,
+        "canonicalModel": "claude-opus-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "tool_reported_cost_usd_not_billing": 0.3143292
+  },
+  "duration_ms": 51530,
+  "duration_api_ms": 50190,
+  "num_turns": 9,
+  "tool_calls": 8,
+  "files_read_with_Read": [],
+  "permission_denials": [],
+  "activity": [
+    {
+      "n": 1,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; ls -a; cat CLAUDE.md AGENTS.md 2>/dev/null | head -80; git ls-files | head -80",
+        "description": "List repo files and instructions"
+      },
+      "result_chars": 2910,
+      "result_error": false
+    },
+    {
+      "n": 2,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; head -120 .ai/context.yaml; wc -l src/ai_context_map/commands/*.py src/ai_context_map/emitter/*.py src/ai_context_map/models/context.py",
+        "description": "Read context.yaml and file sizes"
+      },
+      "result_chars": 3803,
+      "result_error": false
+    },
+    {
+      "n": 3,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; cat -n src/ai_context_map/commands/generate_cmd.py; cat -n src/ai_context_map/emitter/yaml_writer.py",
+        "description": "Read generate command and yaml writer"
+      },
+      "result_chars": 10770,
+      "result_error": false
+    },
+    {
+      "n": 4,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; cat -n src/ai_context_map/models/context.py; cat -n src/ai_context_map/commands/export_cmd.py; cat -n src/ai_context_map/emitter/portable_writer.py",
+        "description": "Read model, export command, portable writer"
+      },
+      "result_chars": 13670,
+      "result_error": false
+    },
+    {
+      "n": 5,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; cat -n src/ai_context_map/config.py | head -60; grep -n \"export\\|generate\\|write-agents\" src/ai_context_map/cli.py; grep -n \"constraints\\|known_\\|^[a-z_]*:\" .ai/context.yaml | head -40; git log --oneline | head; ls tests",
+        "description": "Check config, CLI, context fields, tests"
+      },
+      "result_chars": 3730,
+      "result_error": false
+    },
+    {
+      "n": 6,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; cat -n src/ai_context_map/commands/inspect_cmd.py; sed -n 340,400p src/ai_context_map/cli.py; cat -n src/ai_context_map/commands/check_cmd.py; grep -n \"constraints\\|preserv\\|known_issues\\|existing\" tests/*.py | head -30; grep -rn \"hand\\|preserv\\|constraints\" README.md docs/*.md | head -20",
+        "description": "Read inspect, CLI, check, related tests/docs"
+      },
+      "result_chars": 9288,
+      "result_error": false
+    },
+    {
+      "n": 7,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; sed -n 200,215p README.md; sed -n 250,262p README.md; sed -n 410,420p README.md; grep -n \"def test\\|constraints\\|project_goals\\|AGENTS\\|force\" tests/test_cli.py | head -50; cat -n tests/test_portable_writer.py | head -70; git log --oneline -3 -- src/ai_context_map/commands/generate_cmd.py src/ai_context_map/emitter/portable_writer.py",
+        "description": "Read README sections and CLI/portable tests"
+      },
+      "result_chars": 5650,
+      "result_error": false
+    },
+    {
+      "n": 8,
+      "tool": "Bash",
+      "input": {
+        "command": "cd <repo>; sed -n 50,116p tests/test_cli.py",
+        "description": "Read preservation test in test_cli"
+      },
+      "result_chars": 2735,
+      "result_error": false
+    }
+  ],
+  "grading": {
+    "criteria": {
+      "R1": true,
+      "R2": true,
+      "R3": true,
+      "R4": true
+    },
+    "automatic_fail": false,
+    "accepted": true,
+    "missed_rules": [],
+    "unsupported_claims": [],
+    "direction_confusion": false,
+    "notes": "Explicit copy list and silent drop of unlisted keys; export via inspect_context dict and portable_writer; --force guard; known_risks needs model + generate copy + render_agents_markdown; noted AGENTS.md lacks Known Issues/Decisions; found stale aicontext_version key independently.",
+    "overview_influence": "not applicable (condition A)"
+  }
+}
